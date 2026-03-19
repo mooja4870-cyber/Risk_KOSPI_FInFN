@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkweb_mobile_frontend=self.webpackChunkweb_mobile_frontend||[]).push([[363],{36363:(e,t,o)=>{o.r(t),o.d(t,{default:()=>f});var n=o(9950),s=o(28429),c=o(44414);const f=()=>{const{path2:e}=(0,s.g)();return(0,n.useLayoutEffect)(()=>{window.location.href="/domestic/home"},[e]),(0,c.jsx)("div",{})}}}]);
