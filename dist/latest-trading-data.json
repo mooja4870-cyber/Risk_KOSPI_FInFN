@@ -1,9 +1,9 @@
 {
   "meta": {
     "source": "Naver Finance investor detail + KOSPI close (historical + 24-hour refresh)",
-    "updatedAtKst": "2026-03-16 16:21:15",
+    "updatedAtKst": "2026-03-19 14:21:30",
     "earliestTradingDate": "1997-04-14",
-    "latestTradingDate": "2026-03-16",
+    "latestTradingDate": "2026-03-19",
     "refreshIntervalHours": 24,
     "historicalStartDate": "1997-01-01"
   },
@@ -146,7 +146,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 690.8
+      "kospiClose": null
     },
     {
       "date": "1997-04-25",
@@ -160,7 +160,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 692.48
+      "kospiClose": null
     },
     {
       "date": "1997-04-26",
@@ -174,7 +174,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 699.76
+      "kospiClose": null
     },
     {
       "date": "1997-04-28",
@@ -100933,6 +100933,48 @@
       "pension": 412,
       "otherCorporation": 411,
       "kospiClose": 5549.85
+    },
+    {
+      "date": "2026-03-17",
+      "individual": -5752,
+      "foreign": -1740,
+      "institution": 7341,
+      "financialInvestment": 4274,
+      "insurance": -472,
+      "investmentTrust": 2543,
+      "bank": -14,
+      "otherFinancial": 167,
+      "pension": 843,
+      "otherCorporation": 152,
+      "kospiClose": 5640.48
+    },
+    {
+      "date": "2026-03-18",
+      "individual": -38717,
+      "foreign": 8802,
+      "institution": 31093,
+      "financialInvestment": 30984,
+      "insurance": -452,
+      "investmentTrust": -612,
+      "bank": 67,
+      "otherFinancial": 146,
+      "pension": 960,
+      "otherCorporation": -1178,
+      "kospiClose": 5925.03
+    },
+    {
+      "date": "2026-03-19",
+      "individual": 19435,
+      "foreign": -16480,
+      "institution": -3907,
+      "financialInvestment": -4448,
+      "insurance": 33,
+      "investmentTrust": 967,
+      "bank": -63,
+      "otherFinancial": 159,
+      "pension": -555,
+      "otherCorporation": 953,
+      "kospiClose": 5778.91
     }
   ]
 }
