@@ -1,7 +1,7 @@
 <<<<<<< HEAD
 # Risk_KOSPI_FInFN
 =======
-# KOSPI '금융투자' 수급 분석 (Financial Investment Flow Analyzer)
+# KOSPI 거래주체별 수급 분석 (Financial Investment Flow Analyzer)
 
 ## 개요 (Overview)
 본 프로젝트는 KOSPI 시장에서 기관 투자자의 한 축을 담당하는 **'금융투자(Financial Investment)'**의 일일 매매 동향(수급)을 딥스 다이브(Deep Dive)하여 분석하는 리스크 모니터링 시스템입니다. 
