@@ -2,12 +2,12 @@ import { useMemo } from 'react';
 import { BookOpen, ExternalLink, TrendingDown } from 'lucide-react';
 import type { DailyTradeData } from '../data/mockData';
 import { DailyBarChart, IndexLineChart } from './Charts';
-import { calculateMovingAverages, filterByDateRange } from '../utils/analysis';
+import { calculateMovingAverages, filterByDateRange, type EntityKey } from '../utils/analysis';
 import { sp500BlackMonday1987, sp500FlashCrash2010, kospiIMFCrisis1998 } from '../data/benchmarkStaticData';
 
 interface BenchmarkingProps {
   allData: DailyTradeData[];
-  entityKey?: 'financialInvestment' | 'foreign';
+  entityKey?: EntityKey;
   entityLabel?: string;
 }
 
@@ -31,11 +31,16 @@ function marketBadge(market: BenchmarkCase['market']): string {
   return 'bg-rose-500/15 text-rose-300 border-rose-500/30';
 }
 
-function findWorstSellInYear(data: DailyTradeData[], year: string, key: 'financialInvestment' | 'foreign'): DailyTradeData | undefined {
+function getEntityVal(d: DailyTradeData, key: EntityKey): number {
+  if (key === 'combined') return d.financialInvestment + d.foreign;
+  return d[key] as number;
+}
+
+function findWorstSellInYear(data: DailyTradeData[], year: string, key: EntityKey): DailyTradeData | undefined {
   const rows = data.filter((row) => row.date.startsWith(`${year}-`));
   if (rows.length === 0) return undefined;
   return rows.reduce((worst, row) =>
-    row[key] < worst[key] ? row : worst
+    getEntityVal(row, key) < getEntityVal(worst, key) ? row : worst
   );
 }
 
@@ -60,7 +65,7 @@ export default function Benchmarking({
       period: '2008-09 ~ 2008-10',
       shock:
         kr2008WorstSellDay
-          ? `2008년 ${entityLabel} 최대 순매도: ${kr2008WorstSellDay.date} ${formatSignedEok(kr2008WorstSellDay[entityKey])}`
+          ? `2008년 ${entityLabel} 최대 순매도: ${kr2008WorstSellDay.date} ${formatSignedEok(getEntityVal(kr2008WorstSellDay, entityKey))}`
           : `글로벌 금융위기 구간에서 KOSPI 급락과 유동성 경색 동반`,
       mechanism:
         `신용경색 국면에서 ${entityLabel}와 프로그램 매매 계정의 포지션 축소·차익실현 매도가 반복되면, 하락 변동성이 더 커지는 패턴이 나타날 수 있음.`,

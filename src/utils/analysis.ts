@@ -1,5 +1,14 @@
 import type { DailyTradeData } from '../data/mockData';
 
+// Extended entity key that supports composite 'combined' option
+export type EntityKey = 'financialInvestment' | 'foreign' | 'combined' | 'individual';
+
+/** Returns the net-buy value for a row based on the selected entity key */
+function getEntityValue(d: DailyTradeData, entityKey: EntityKey): number {
+  if (entityKey === 'combined') return d.financialInvestment + d.foreign;
+  return d[entityKey] as number;
+}
+
 export interface StatsSummary {
   totalNetBuy: number;
   averageDailyNetBuy: number;
@@ -49,7 +58,7 @@ export function filterByDateRange(
 }
 
 // Calculate statistics
-export function calculateStats(data: DailyTradeData[], entityKey: keyof DailyTradeData = 'financialInvestment'): StatsSummary {
+export function calculateStats(data: DailyTradeData[], entityKey: EntityKey = 'financialInvestment'): StatsSummary {
   if (data.length === 0) {
     return {
       totalNetBuy: 0,
@@ -73,7 +82,7 @@ export function calculateStats(data: DailyTradeData[], entityKey: keyof DailyTra
     };
   }
 
-  const values = data.map((d) => d[entityKey] as number);
+  const values = data.map((d) => getEntityValue(d, entityKey));
   const total = values.reduce((a, b) => a + b, 0);
   const mean = total / values.length;
   const individualBuyAmount = data.reduce((sum, d) => sum + Math.max(0, d.individual), 0);
@@ -103,7 +112,7 @@ export function calculateStats(data: DailyTradeData[], entityKey: keyof DailyTra
       Math.max(0, d.otherCorporation),
     0
   );
-  const currentEntityBuyAmount = data.reduce((sum, d) => sum + Math.max(0, d[entityKey] as number), 0);
+  const currentEntityBuyAmount = data.reduce((sum, d) => sum + Math.max(0, getEntityValue(d, entityKey)), 0);
   const financialBuySharePct =
     totalBuyAmount > 0 ? (currentEntityBuyAmount / totalBuyAmount) * 100 : 0;
 
@@ -142,7 +151,7 @@ export function calculateStats(data: DailyTradeData[], entityKey: keyof DailyTra
 // Detect consecutive sell streaks
 export function detectConsecutiveSells(
   data: DailyTradeData[],
-  entityKey: keyof DailyTradeData = 'financialInvestment'
+  entityKey: EntityKey = 'financialInvestment'
 ): ConsecutiveSellInfo {
   const allStreaks: ConsecutiveSellInfo['streaks'] = [];
   let maxStreak = 0;
@@ -155,7 +164,7 @@ export function detectConsecutiveSells(
   );
 
   for (let i = 0; i < sorted.length; i++) {
-    const val = sorted[i][entityKey] as number;
+    const val = getEntityValue(sorted[i], entityKey);
     if (val < 0) {
       if (currentStreak === 0) {
         streakStart = sorted[i].date;
@@ -199,7 +208,7 @@ export function detectConsecutiveSells(
     streaks: structuralStreaks.sort((a, b) => b.days - a.days),
     currentStreak:
       sorted.length > 0 &&
-        (sorted[sorted.length - 1][entityKey] as number) < 0
+        getEntityValue(sorted[sorted.length - 1], entityKey) < 0
         ? currentStreak
         : 0,
     structuralStreakCount: structuralStreaks.length,
@@ -208,7 +217,7 @@ export function detectConsecutiveSells(
     structuralCoveragePct,
     currentStreakAmount:
       sorted.length > 0 &&
-        (sorted[sorted.length - 1][entityKey] as number) < 0
+        getEntityValue(sorted[sorted.length - 1], entityKey) < 0
         ? streakAmount
         : 0,
   };
@@ -275,7 +284,7 @@ export function calculateRiskScore(
 // Calculate moving averages
 export function calculateMovingAverages(
   data: DailyTradeData[],
-  entityKey: keyof DailyTradeData = 'financialInvestment'
+  entityKey: EntityKey = 'financialInvestment'
 ): {
   date: string;
   value: number;
@@ -293,7 +302,7 @@ export function calculateMovingAverages(
   let cumSum = 0;
 
   return sorted.map((d, i) => {
-    const val = d[entityKey] as number;
+    const val = getEntityValue(d, entityKey);
     cumSum += val;
 
     let ma5: number | null = null;
@@ -301,12 +310,12 @@ export function calculateMovingAverages(
 
     if (i >= 4) {
       const slice5 = sorted.slice(i - 4, i + 1);
-      ma5 = slice5.reduce((s, x) => s + (x[entityKey] as number), 0) / 5;
+      ma5 = slice5.reduce((s, x) => s + getEntityValue(x, entityKey), 0) / 5;
     }
 
     if (i >= 19) {
       const slice20 = sorted.slice(i - 19, i + 1);
-      ma20 = slice20.reduce((s, x) => s + (x[entityKey] as number), 0) / 20;
+      ma20 = slice20.reduce((s, x) => s + getEntityValue(x, entityKey), 0) / 20;
     }
 
     return {

@@ -15,7 +15,7 @@ import {
 interface StatCardsProps {
   stats: StatsSummary;
   entityLabel?: string;
-  entityKey?: 'financialInvestment' | 'foreign';
+  entityKey?: import('../utils/analysis').EntityKey;
 }
 
 export default function StatCards({ stats, entityLabel = '금융투자', entityKey = 'financialInvestment' }: StatCardsProps) {

@@ -6,6 +6,7 @@ import {
   detectConsecutiveSells,
   calculateRiskScore,
   calculateMovingAverages,
+  type EntityKey,
 } from './utils/analysis';
 import StatCards from './components/StatCards';
 import RiskScore from './components/RiskScore';
@@ -85,11 +86,13 @@ export default function App() {
   const [endDate, setEndDate] = useState(() => mockData[mockData.length - 1]?.date ?? getKstDateString(new Date()));
   const [activeTab, setActiveTab] = useState<TabId>('overview');
   const [isAnalyzed, setIsAnalyzed] = useState(true);
-  const [selectedEntity, setSelectedEntity] = useState<'financialInvestment' | 'foreign'>('financialInvestment');
+  const [selectedEntity, setSelectedEntity] = useState<EntityKey>('financialInvestment');
 
-  const entities: { id: 'financialInvestment' | 'foreign'; label: string; desc: string }[] = [
+  const entities: { id: EntityKey; label: string; desc: string }[] = [
     { id: 'financialInvestment', label: '금융투자', desc: '기관 중심 금융투자' },
     { id: 'foreign', label: '외국인', desc: '해외 자본 수급' },
+    { id: 'combined', label: '금융투자+외국인', desc: '금융투자·외국인 합산' },
+    { id: 'individual', label: '개인', desc: '개인 투자자 수급' },
   ];
 
   const currentEntity = entities.find((e) => e.id === selectedEntity)!;
@@ -247,7 +250,7 @@ export default function App() {
               </div>
               <div className="flex flex-col">
                 <p className="text-gray-400 text-[10px] sm:text-xs">
-                  {selectedEntity === 'financialInvestment' ? 'Financial Investment' : 'Foreign Investors'} Flow Analyzer · 리스크 수급 분석
+                  {currentEntity.desc} Flow Analyzer · 리스크 수급 분석
                 </p>
                 <p className="text-gray-500 text-[9px] sm:text-[11px] leading-tight mt-0.5">
                   거래주체 중 {currentEntity.label}에 대한 매도매수 추세분석으로 주식급락 예방 차원

@@ -4,7 +4,7 @@ import { Table } from 'lucide-react';
 
 interface Props {
   data: DailyTradeData[];
-  entityKey?: 'financialInvestment' | 'foreign';
+  entityKey?: import('../utils/analysis').EntityKey;
   entityLabel?: string;
 }
 
