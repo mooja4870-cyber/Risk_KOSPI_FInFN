@@ -16,6 +16,7 @@ import {
   CumulativeChart,
   MovingAverageChart,
   ForeignCorrelationChart,
+  CorrelationChart,
 } from './components/Charts';
 import DataTable from './components/DataTable';
 import Benchmarking from './components/Benchmarking';
@@ -470,6 +471,11 @@ export default function App() {
                 <CumulativeChart data={chartData} entityLabel={currentEntity.label} />
                 <MovingAverageChart data={chartData} entityLabel={currentEntity.label} />
                 <ForeignCorrelationChart data={chartData} entityLabel={currentEntity.label} />
+                <CorrelationChart
+                  data={filteredData}
+                  entityKey={selectedEntity}
+                  entityLabel={currentEntity.label}
+                />
               </div>
             )}
 

@@ -404,3 +404,159 @@ export function IndexLineChart({ data, indexLabel, crashDate, color = '#f59e0b' 
     </div>
   );
 }
+
+// ── 거래주체-코스피 방향 일치율 & 롤링 상관계수 차트 ────────────────────────
+import { useState } from 'react';
+import { calculateCorrelationSeries, type EntityKey } from '../utils/analysis';
+import type { DailyTradeData } from '../data/mockData';
+
+interface CorrelationChartProps {
+  data: DailyTradeData[];
+  entityKey: EntityKey;
+  entityLabel: string;
+}
+
+const WINDOW_OPTIONS = [
+  { value: 3, label: '3일' },
+  { value: 5, label: '5일' },
+  { value: 10, label: '10일' },
+  { value: 20, label: '20일' },
+];
+
+const CorrelationTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-gray-900/95 border border-gray-700 rounded-lg p-3 shadow-xl backdrop-blur-sm">
+        <p className="text-gray-400 text-xs mb-2 font-mono">{label}</p>
+        {payload.map((p: any, i: number) => (
+          <p key={i} className="text-sm" style={{ color: p.color }}>
+            {p.name}:{' '}
+            {p.dataKey === 'directionalAgreement'
+              ? `${p.value}%`
+              : p.value?.toFixed(2)}
+          </p>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
+
+export function CorrelationChart({ data, entityKey, entityLabel }: CorrelationChartProps) {
+  const [window, setWindow] = useState(10);
+
+  const series = calculateCorrelationSeries(data, entityKey, window);
+
+  return (
+    <div className="rounded-xl border border-gray-700/50 bg-gray-800/50 backdrop-blur-sm p-5">
+      {/* 헤더 */}
+      <div className="flex flex-wrap items-start justify-between gap-3 mb-1">
+        <div>
+          <h3 className="text-white font-bold">
+            {entityLabel} ↔ KOSPI 방향 일치율 &amp; 상관계수
+          </h3>
+          <p className="text-gray-400 text-xs mt-0.5">
+            파란선: {window}일 방향 일치율(%) · 주황선: {window}일 롤링 피어슨 상관계수(-1~+1)
+          </p>
+        </div>
+        {/* 창 크기 토글 */}
+        <div className="flex bg-gray-900/80 p-1 rounded-xl border border-gray-700/50">
+          {WINDOW_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => setWindow(opt.value)}
+              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                window === opt.value
+                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow'
+                  : 'text-gray-500 hover:text-gray-300'
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 설명 박스 */}
+      <div className="mb-4 flex flex-wrap gap-3 text-[11px]">
+        <span className="flex items-center gap-1.5 text-blue-400">
+          <span className="inline-block w-4 h-0.5 bg-blue-400" />
+          방향 일치율 50% 이상 = 동행
+        </span>
+        <span className="flex items-center gap-1.5 text-amber-400">
+          <span className="inline-block w-4 h-0.5 bg-amber-400" />
+          상관계수 +0.5↑ = 강한 양의 상관
+        </span>
+        <span className="flex items-center gap-1.5 text-rose-400">
+          <span className="inline-block w-4 h-0.5 bg-rose-400 border-dashed" />
+          상관계수 0선 = 무상관
+        </span>
+      </div>
+
+      <div className="h-64 sm:h-80">
+        <ResponsiveContainer width="100%" height="100%">
+          <ComposedChart data={series}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+            <XAxis
+              dataKey="date"
+              tick={{ fill: '#9ca3af', fontSize: 10 }}
+              tickFormatter={(str) => (str ? str.slice(5) : '')}
+              interval={Math.max(Math.floor(series.length / 12), 0)}
+              axisLine={{ stroke: '#4b5563' }}
+            />
+            {/* 왼쪽 Y축: 방향 일치율 (0~100%) */}
+            <YAxis
+              yAxisId="agree"
+              domain={[0, 100]}
+              tick={{ fill: '#60a5fa', fontSize: 10 }}
+              axisLine={{ stroke: '#1e40af' }}
+              tickFormatter={(v) => `${v}%`}
+            />
+            {/* 오른쪽 Y축: 피어슨 상관계수 (-1~+1) */}
+            <YAxis
+              yAxisId="corr"
+              orientation="right"
+              domain={[-1, 1]}
+              tick={{ fill: '#f59e0b', fontSize: 10 }}
+              axisLine={{ stroke: '#78350f' }}
+              tickFormatter={(v) => v.toFixed(1)}
+            />
+            <Tooltip content={<CorrelationTooltip />} />
+            <Legend wrapperStyle={{ fontSize: '12px' }} />
+
+            {/* 방향 일치율 50% 기준선 */}
+            <ReferenceLine yAxisId="agree" y={50} stroke="#6b7280" strokeDasharray="4 4"
+              label={{ value: '50%', fill: '#9ca3af', fontSize: 9, position: 'insideTopLeft' }} />
+            {/* 상관계수 0 기준선 */}
+            <ReferenceLine yAxisId="corr" y={0} stroke="#f43f5e" strokeDasharray="3 3"
+              label={{ value: 'r=0', fill: '#f87171', fontSize: 9, position: 'insideTopRight' }} />
+
+            {/* 방향 일치율 선 */}
+            <Line
+              yAxisId="agree"
+              type="monotone"
+              dataKey="directionalAgreement"
+              name={`방향 일치율 (${window}일)`}
+              stroke="#3b82f6"
+              strokeWidth={2}
+              dot={false}
+              connectNulls={false}
+            />
+            {/* 롤링 피어슨 상관계수 선 */}
+            <Line
+              yAxisId="corr"
+              type="monotone"
+              dataKey="rollingCorrelation"
+              name={`롤링 상관계수 (${window}일)`}
+              stroke="#f59e0b"
+              strokeWidth={2}
+              dot={false}
+              connectNulls={false}
+            />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+}
+

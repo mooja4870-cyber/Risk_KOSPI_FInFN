@@ -332,6 +332,7 @@ export function calculateMovingAverages(
   });
 }
 
+
 // Format number with commas and sign
 export function formatNumber(num: number): string {
   const sign = num > 0 ? '+' : '';
@@ -343,3 +344,77 @@ export function formatDateKR(dateStr: string): string {
   const d = new Date(dateStr);
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
 }
+
+export interface CorrelationPoint {
+  date: string;
+  directionalAgreement: number | null; // 방향 일치율 0~100 (%)
+  rollingCorrelation: number | null;   // 피어슨 상관계수 -1 ~ +1
+}
+
+/**
+ * 거래주체 순매수 방향과 코스피 방향 간의 "방향 일치율"과 "롤링 피어슨 상관계수"를 계산.
+ * @param data 날짜별 거래 데이터
+ * @param entityKey 분석 대상 주체 키
+ * @param window 이동 창 크기 (3, 5, 10, 20일)
+ */
+export function calculateCorrelationSeries(
+  data: DailyTradeData[],
+  entityKey: EntityKey,
+  window: number
+): CorrelationPoint[] {
+  if (data.length < 2) return [];
+
+  const sorted = [...data].sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+  );
+
+  // 피어슨 상관계수 헬퍼
+  function pearsonR(xs: number[], ys: number[]): number {
+    const n = xs.length;
+    if (n < 2) return 0;
+    const meanX = xs.reduce((a, b) => a + b, 0) / n;
+    const meanY = ys.reduce((a, b) => a + b, 0) / n;
+    const num = xs.reduce((sum, x, i) => sum + (x - meanX) * (ys[i] - meanY), 0);
+    const denX = Math.sqrt(xs.reduce((sum, x) => sum + Math.pow(x - meanX, 2), 0));
+    const denY = Math.sqrt(ys.reduce((sum, y) => sum + Math.pow(y - meanY, 2), 0));
+    if (denX === 0 || denY === 0) return 0;
+    return num / (denX * denY);
+  }
+
+  return sorted.map((_, i) => {
+    if (i < window) {
+      return { date: sorted[i].date, directionalAgreement: null, rollingCorrelation: null };
+    }
+
+    const slice = sorted.slice(i - window, i);
+    const entityVals = slice.map(d => getEntityValue(d, entityKey));
+    const kospiVals = slice.map(d => d.kospiClose ?? 0);
+
+    // 방향 일치율: 전일 대비 방향이 같으면 1, 다르면 0
+    let matchCount = 0;
+    let validDays = 0;
+    for (let j = 1; j < slice.length; j++) {
+      const entityDir = entityVals[j] - entityVals[j - 1];
+      const kospiDir = kospiVals[j] - kospiVals[j - 1];
+      if (entityDir !== 0 && kospiDir !== 0) {
+        validDays++;
+        if ((entityDir > 0) === (kospiDir > 0)) matchCount++;
+      }
+    }
+    const directionalAgreement = validDays > 0
+      ? Math.round((matchCount / validDays) * 100)
+      : null;
+
+    // 롤링 피어슨 상관계수: 순매수 값과 코스피 종가 간의 상관
+    const rollingCorrelation = kospiVals.some(v => v !== 0)
+      ? Math.round(pearsonR(entityVals, kospiVals) * 100) / 100
+      : null;
+
+    return {
+      date: sorted[i].date,
+      directionalAgreement,
+      rollingCorrelation,
+    };
+  });
+}
+
