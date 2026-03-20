@@ -117,8 +117,8 @@ export function DailyBarChart({ data, compact = false, entityLabel = '금융투�
               type="monotone"
               dataKey="kospiClose"
               name="KOSPI"
-              stroke="#22d3ee"
-              strokeWidth={2}
+              stroke="#ef4444"
+              strokeWidth={2.5}
               dot={false}
               connectNulls={false}
             />
@@ -310,9 +310,9 @@ export function ForeignCorrelationChart({ data, entityLabel = '금융투자' }: 
               type="monotone"
               dataKey="kospiClose"
               name="KOSPI"
-              stroke="#22d3ee"
-              strokeWidth={2}
-              strokeOpacity={0.6}
+              stroke="#ef4444"
+              strokeWidth={2.5}
+              strokeOpacity={0.8}
               dot={false}
               connectNulls={false}
             />

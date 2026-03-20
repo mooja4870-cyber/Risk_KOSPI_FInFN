@@ -199,7 +199,7 @@ export default function Benchmarking({
                     data={kospiIMFCrisis1998}
                     indexLabel="KOSPI"
                     crashDate="1997-11-21"
-                    color="#22d3ee"
+                    color="#ef4444"
                   />
                 </div>
               </div>
