@@ -29,7 +29,7 @@ function generateMockData(): DailyTradeData[] {
   const rand = seededRandom(42);
 
   const startDate = new Date('2024-01-02');
-  const endDate = getKstYesterday();
+  const endDate = getKstToday();  // ← "오늘"까지 포함하도록 수정
   const current = new Date(startDate);
 
   // Patterns: financial investment tends to have streaks
@@ -99,6 +99,15 @@ function generateMockData(): DailyTradeData[] {
 }
 
 export const mockData = generateMockData();
+
+function getKstToday(): Date {
+  const now = new Date();
+  const kst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  const y = kst.getUTCFullYear();
+  const m = kst.getUTCMonth();
+  const d = kst.getUTCDate();
+  return new Date(Date.UTC(y, m, d));
+}
 
 function getKstYesterday(): Date {
   const now = new Date();
