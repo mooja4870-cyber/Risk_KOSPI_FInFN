@@ -118,7 +118,7 @@ export function DailyBarChart({ data, compact = false, entityLabel = '금융투�
               dataKey="kospiClose"
               name="KOSPI"
               stroke="#ef4444"
-              strokeWidth={2.5}
+              strokeWidth={3}
               dot={false}
               connectNulls={false}
             />
@@ -180,7 +180,7 @@ export function CumulativeChart({ data, compact = false, entityLabel = '금융�
               name={`누적 ${entityLabel} 순매수`}
               stroke={isPositive ? '#fbbf24' : '#f43f5e'}
               fill="url(#cumGradient)"
-              strokeWidth={2.5}
+              strokeWidth={3}
             />
           </AreaChart>
         </ResponsiveContainer>
@@ -293,7 +293,7 @@ export function ForeignCorrelationChart({ data, entityLabel = '금융투자' }: 
               dataKey="primary"
               name={entityLabel}
               stroke="#fbbf24"
-              strokeWidth={2}
+              strokeWidth={2.5}
               dot={false}
             />
             <Line
@@ -301,8 +301,8 @@ export function ForeignCorrelationChart({ data, entityLabel = '금융투자' }: 
               type="monotone"
               dataKey="counterpart"
               name={counterpartLabel}
-              stroke="#06b6d4"
-              strokeWidth={1.5}
+              stroke="#3b82f6"
+              strokeWidth={2.5}
               dot={false}
             />
             <Line
@@ -311,8 +311,8 @@ export function ForeignCorrelationChart({ data, entityLabel = '금융투자' }: 
               dataKey="kospiClose"
               name="KOSPI"
               stroke="#ef4444"
-              strokeWidth={2.5}
-              strokeOpacity={0.8}
+              strokeWidth={3}
+              strokeOpacity={0.9}
               dot={false}
               connectNulls={false}
             />
