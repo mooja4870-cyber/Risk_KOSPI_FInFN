@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# Risk_KOSPI_FInFN
-=======
 # KOSPI 거래주체별 수급 분석 (Financial Investment Flow Analyzer)
 
 ## 개요 (Overview)
@@ -18,39 +15,82 @@
    - 5일선(MA5)과 20일선(MA20)을 기준으로 단기 및 중기적인 수급 추세를 시각적으로 제공합니다.
 4. **대시보드 차트화 (Visual Charts)**
    - 누적 수급 차트, 일일 막대 차트 등을 통해 외국인 수급과의 상관관계 등 복합적인 시장 반응을 직관적으로 확인할 수 있습니다.
+5. **실시간 자동 업데이트 (Auto-Update Scheduler)**
+   - 시간 단위 자동 갱신으로 최신 거래 데이터를 항상 반영합니다.
 
 ## 아키텍처 및 기술 스택 (Architecture & Tech Stack)
 본 프로젝트는 **React**로 구성된 프론트엔드와 **Streamlit**으로 구성된 백엔드 래퍼(Wrapper)가 결합된 하이브리드 대시보드 구조입니다.
 
 - **Frontend**: `React`, `TypeScript`, `Vite`, `Tailwind CSS`, `Lucide React`
 - **Backend/Wrapper**: `Python (Streamlit)`
-- **데이터 흐름**: 시스템이 주기적으로 `public/latest-trading-data.json` 파일을 업데이트하면, Streamlit 앱(`app.py`)이 번들링된 React 정적 페이지(`index.html`)에 해당 JSON을 동적으로 주입(Injection)하여 화면에 렌더링합니다.
+- **Scheduler**: `APScheduler` (시간 단위 자동 데이터 갱신)
+- **데이터 흐름**: 스케줄러가 시간 단위(평일 09:00-15:30은 30분 단위)로 `public/latest-trading-data.json`을 업데이트하면, Streamlit 앱(`streamlit_app.py`)이 이 JSON을 React UI에 동적으로 주입하여 실시간으로 렌더링합니다.
 
 ## 프로젝트 폴더 구조 (Directory Structure)
 ```
 Risk_KOSPI/
-├── app.py                # Streamlit 백엔드 래퍼 스크립트 (React 번들 로딩 역할)
-├── package.json          # Node.js 패키지 의존성 파일
-├── vite.config.ts        # Vite 빌드 설정 파일
+├── streamlit_app.py      # Streamlit 백엔드 래퍼 (React 정적 번들 로딩)
+├── ecosystem.config.cjs  # PM2 프로세스 관리 설정
+├── package.json          # Node.js 패키지 의존성
+├── requirements.txt      # Python 패키지 의존성
+├── vite.config.ts        # Vite 빌드 설정
 ├── public/
-│   └── latest-trading-data.json  # 최신 거래 데이터 페이로드 파일
-├── src/                  # React 프론트엔드 소스코드 기반
-│   ├── App.tsx           # 메인 UI 레이아웃 및 탭 라우팅
-│   ├── components/       # 차트, 데이터표, 리스크 점수표 등 UI 컴포넌트
-│   ├── data/             # Mock-up 데이터 (mockData.ts)
-│   └── utils/            # 이동평균, 연속 매도 계산 등 분석 로직 (analysis.ts)
-└── dist/                 # Vite 빌드 산출물 (index.html 및 static files 등록 위치)
+│   └── latest-trading-data.json  # 최신 거래 데이터 JSON
+├── scripts/
+│   ├── update_latest_data.py     # 데이터 수집 및 업데이트 스크립트
+│   └── scheduler.py              # 자동 업데이트 스케줄러 (시간 단위)
+├── src/                  # React 프론트엔드 소스
+│   ├── App.tsx           # 메인 UI & 탭 라우팅
+│   ├── components/       # UI 컴포넌트 (차트, 테이블, 리스크 점수 등)
+│   ├── data/             # Mock 데이터
+│   └── utils/            # 분석 로직
+├── dist/                 # Vite 프로덕션 빌드 산출물
+└── streamlit_static/     # Streamlit 배포용 정적 파일
 ```
 
-## 실행 방법 (How to Run)
-1. **프론트엔드 개발 환경 실행**
-   ```bash
-   npm install
-   npm run dev
-   ```
-2. **프로덕션 빌드 및 하이브리드 대시보드(Streamlit) 실행**
-   ```bash
-   npm run build
-   streamlit run app.py
-   ```
->>>>>>> aadefcc (feat: Prepare for Streamlit Cloud deployment with static assets and server management)
+## 설치 및 실행 (Installation & Execution)
+
+### 1️⃣ 초기 설정
+```bash
+# Node.js 패키지 설치
+npm install
+
+# Python 의존성 설치
+pip install -r requirements.txt
+```
+
+### 2️⃣ 개발 모드 실행
+```bash
+# 프론트엔드 개발 서버 실행 (Vite, Port 5173)
+npm run dev
+
+# 별도 터미널에서 Streamlit 실행
+streamlit run streamlit_app.py
+```
+
+### 3️⃣ 프로덕션 모드 (자동 업데이트 포함)
+```bash
+# React 프로덕션 빌드
+npm run build
+
+# PM2로 모든 프로세스 자동 실행
+npm start
+# (스케줄러 + Streamlit 백엔드가 자동으로 시작됨)
+
+# 프로세스 상태 확인
+npx pm2 status
+
+# 프로세스 종료
+npm stop
+```
+
+### 4️⃣ 데이터 수동 업데이트
+```bash
+# 즉시 한 번 데이터 업데이트
+npm run update:data
+```
+
+## 자동 업데이트 스케줄 (Auto-Update Schedule)
+- **평일 09:00 ~ 15:30**: 30분 단위 업데이트 (시장 시간)
+- **시장 외 시간 (16:00 ~ 08:59)**: 시간 단위 업데이트
+- **주말**: 업데이트 안 함 (시장 휴장)

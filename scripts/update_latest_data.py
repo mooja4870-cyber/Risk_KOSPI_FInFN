@@ -20,6 +20,10 @@ HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
 }
 
+# 네트워크 설정
+REQUEST_TIMEOUT = 30  # 타임아웃을 30초로 증가
+MAX_RETRIES = 3  # 재시도 횟수
+
 
 def parse_number(value: Optional[str]) -> int:
     if value is None:
@@ -103,8 +107,20 @@ def fetch_detail_trend_map(max_pages: int, min_date: str) -> Dict[str, Dict[str,
 
     for page in range(1, max_pages + 1):
         params = {"bizdate": "215600", "sosok": "", "page": page}
-        response = requests.get(DETAIL_TREND_URL, headers=HEADERS, params=params, timeout=10)
-        response.raise_for_status()
+        
+        # 재시도 로직
+        for attempt in range(MAX_RETRIES):
+            try:
+                response = requests.get(DETAIL_TREND_URL, headers=HEADERS, params=params, timeout=REQUEST_TIMEOUT)
+                response.raise_for_status()
+                break
+            except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
+                if attempt < MAX_RETRIES - 1:
+                    print(f"  ⚠️ 재시도 {attempt + 1}/{MAX_RETRIES} (페이지 {page})")
+                    continue
+                else:
+                    print(f"  ❌ 최대 재시도 횟수 초과 (페이지 {page}): {e}")
+                    return detail_map
 
         rows = parse_detail_rows(response.text)
         if not rows:
@@ -146,8 +162,20 @@ def fetch_kospi_close_map(max_pages: int, min_date: str) -> Dict[str, float]:
 
     for page in range(1, max_pages + 1):
         params = {"code": "KOSPI", "page": page}
-        response = requests.get(KOSPI_INDEX_URL, headers=HEADERS, params=params, timeout=10)
-        response.raise_for_status()
+        
+        # 재시도 로직
+        for attempt in range(MAX_RETRIES):
+            try:
+                response = requests.get(KOSPI_INDEX_URL, headers=HEADERS, params=params, timeout=REQUEST_TIMEOUT)
+                response.raise_for_status()
+                break
+            except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
+                if attempt < MAX_RETRIES - 1:
+                    print(f"  ⚠️ 재시도 {attempt + 1}/{MAX_RETRIES} (KOSPI 페이지 {page})")
+                    continue
+                else:
+                    print(f"  ❌ KOSPI 최대 재시도 횟수 초과 (페이지 {page}): {e}")
+                    return close_map
 
         rows = parse_kospi_rows(response.text)
         if not rows:
