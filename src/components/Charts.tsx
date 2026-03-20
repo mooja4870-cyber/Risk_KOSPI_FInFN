@@ -417,10 +417,12 @@ interface CorrelationChartProps {
 }
 
 const WINDOW_OPTIONS = [
-  { value: 3, label: '3일' },
-  { value: 5, label: '5일' },
-  { value: 10, label: '10일' },
+  { value: 200, label: '200일' },
+  { value: 60, label: '60일' },
   { value: 20, label: '20일' },
+  { value: 10, label: '10일' },
+  { value: 5, label: '5일' },
+  { value: 3, label: '3일' },
 ];
 
 const CorrelationTooltip = ({ active, payload, label }: any) => {

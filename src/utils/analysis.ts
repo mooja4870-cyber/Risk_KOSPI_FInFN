@@ -355,7 +355,7 @@ export interface CorrelationPoint {
  * 거래주체 순매수 방향과 코스피 방향 간의 "방향 일치율"과 "롤링 피어슨 상관계수"를 계산.
  * @param data 날짜별 거래 데이터
  * @param entityKey 분석 대상 주체 키
- * @param window 이동 창 크기 (3, 5, 10, 20일)
+ * @param window 이동 창 크기 (3, 5, 10, 20, 60, 200일)
  */
 export function calculateCorrelationSeries(
   data: DailyTradeData[],
