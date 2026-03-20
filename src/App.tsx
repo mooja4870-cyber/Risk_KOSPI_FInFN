@@ -434,6 +434,13 @@ export default function App() {
                   </div>
                 </div>
 
+                {/* Correlation Chart */}
+                <CorrelationChart
+                  data={filteredData}
+                  entityKey={selectedEntity}
+                  entityLabel={currentEntity.label}
+                />
+
                 {/* Stat Cards */}
                 <StatCards stats={stats} entityLabel={currentEntity.label} entityKey={selectedEntity} />
 
@@ -471,11 +478,6 @@ export default function App() {
                 <CumulativeChart data={chartData} entityLabel={currentEntity.label} />
                 <MovingAverageChart data={chartData} entityLabel={currentEntity.label} />
                 <ForeignCorrelationChart data={chartData} entityLabel={currentEntity.label} />
-                <CorrelationChart
-                  data={filteredData}
-                  entityKey={selectedEntity}
-                  entityLabel={currentEntity.label}
-                />
               </div>
             )}
 
