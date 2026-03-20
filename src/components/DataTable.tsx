@@ -54,32 +54,32 @@ export default function DataTable({ data, entityKey = 'financialInvestment', ent
                     {row.kospiClose?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? '-'}
                   </td>
                   <td
-                    className={`py-2 px-2 text-right text-[10px] sm:text-xs font-mono ${entityKey === 'foreign' ? 'bg-blue-500/5 font-black' : ''} ${row.foreign >= 0 ? 'text-red-500' : 'text-blue-400'
-                      }`}
+                    className={`py-2 px-2 text-right text-[10px] sm:text-xs font-mono ${entityKey === 'foreign' ? 'bg-blue-500/5 font-black' : ''}`}
+                    style={{color: row.foreign >= 0 ? '#3b82f6' : '#dc2626'}}
                   >
                     {formatNumber(row.foreign)}
                   </td>
                   <td
-                    className={`py-2 px-2 text-right text-[10px] sm:text-xs font-mono ${entityKey === 'financialInvestment' ? 'bg-blue-500/5 font-black' : ''} ${row.financialInvestment >= 0 ? 'text-red-500' : 'text-blue-400'
-                      }`}
+                    className={`py-2 px-2 text-right text-[10px] sm:text-xs font-mono ${entityKey === 'financialInvestment' ? 'bg-blue-500/5 font-black' : ''}`}
+                    style={{color: row.financialInvestment >= 0 ? '#fbbf24' : '#dc2626'}}
                   >
                     {formatNumber(row.financialInvestment)}
                   </td>
                   <td
-                    className={`py-2 px-2 text-right text-[10px] sm:text-xs font-mono ${row.individual >= 0 ? 'text-red-500' : 'text-blue-400'
-                      }`}
+                    className={`py-2 px-2 text-right text-[10px] sm:text-xs font-mono`}
+                    style={{color: row.individual >= 0 ? '#9ca3af' : '#dc2626'}}
                   >
                     {formatNumber(row.individual)}
                   </td>
                   <td
-                    className={`py-2 px-2 text-right text-[10px] sm:text-xs font-mono hidden md:table-cell ${row.pension >= 0 ? 'text-red-500' : 'text-blue-400'
-                      }`}
+                    className={`py-2 px-2 text-right text-[10px] sm:text-xs font-mono hidden md:table-cell`}
+                    style={{color: row.pension >= 0 ? '#8b5cf6' : '#dc2626'}}
                   >
                     {formatNumber(row.pension)}
                   </td>
                   <td
-                    className={`py-2 px-2 text-right text-[10px] sm:text-xs font-mono hidden md:table-cell ${row.investmentTrust >= 0 ? 'text-red-500' : 'text-blue-400'
-                      }`}
+                    className={`py-2 px-2 text-right text-[10px] sm:text-xs font-mono hidden md:table-cell`}
+                    style={{color: row.investmentTrust >= 0 ? '#06b6d4' : '#dc2626'}}
                   >
                     {formatNumber(row.investmentTrust)}
                   </td>
