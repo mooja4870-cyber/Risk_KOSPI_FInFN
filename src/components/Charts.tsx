@@ -64,7 +64,7 @@ export function DailyBarChart({ data, compact = false, entityLabel = '금융투�
     date: d.date,
     value: d.value,
     kospiClose: d.kospiClose,
-    fill: d.value >= 0 ? '#fbbf24' : '#f43f5e',
+    fill: d.value >= 0 ? '#fbbf24' : '#dc2626',
   }));
 
   return (
@@ -149,12 +149,12 @@ export function CumulativeChart({ data, compact = false, entityLabel = '금융�
               <linearGradient id="cumGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop
                   offset="5%"
-                  stopColor={isPositive ? '#fbbf24' : '#f43f5e'}
+                  stopColor={isPositive ? '#fbbf24' : '#dc2626'}
                   stopOpacity={0.3}
                 />
                 <stop
                   offset="95%"
-                  stopColor={isPositive ? '#fbbf24' : '#f43f5e'}
+                  stopColor={isPositive ? '#fbbf24' : '#dc2626'}
                   stopOpacity={0}
                 />
               </linearGradient>
@@ -178,7 +178,7 @@ export function CumulativeChart({ data, compact = false, entityLabel = '금융�
               type="monotone"
               dataKey="cumulative"
               name={`누적 ${entityLabel} 순매수`}
-              stroke={isPositive ? '#fbbf24' : '#f43f5e'}
+              stroke={isPositive ? '#fbbf24' : '#dc2626'}
               fill="url(#cumGradient)"
               strokeWidth={3}
             />
