@@ -64,7 +64,7 @@ export function DailyBarChart({ data, compact = false, entityLabel = '금융투�
     date: d.date,
     value: d.value,
     kospiClose: d.kospiClose,
-    fill: d.value >= 0 ? '#10b981' : '#f43f5e',
+    fill: d.value >= 0 ? '#fbbf24' : '#f43f5e',
   }));
 
   return (
@@ -149,12 +149,12 @@ export function CumulativeChart({ data, compact = false, entityLabel = '금융�
               <linearGradient id="cumGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop
                   offset="5%"
-                  stopColor={isPositive ? '#10b981' : '#f43f5e'}
+                  stopColor={isPositive ? '#fbbf24' : '#f43f5e'}
                   stopOpacity={0.3}
                 />
                 <stop
                   offset="95%"
-                  stopColor={isPositive ? '#10b981' : '#f43f5e'}
+                  stopColor={isPositive ? '#fbbf24' : '#f43f5e'}
                   stopOpacity={0}
                 />
               </linearGradient>
@@ -178,9 +178,9 @@ export function CumulativeChart({ data, compact = false, entityLabel = '금융�
               type="monotone"
               dataKey="cumulative"
               name={`누적 ${entityLabel} 순매수`}
-              stroke={isPositive ? '#10b981' : '#f43f5e'}
+              stroke={isPositive ? '#fbbf24' : '#f43f5e'}
               fill="url(#cumGradient)"
-              strokeWidth={2}
+              strokeWidth={2.5}
             />
           </AreaChart>
         </ResponsiveContainer>
@@ -234,7 +234,7 @@ export function MovingAverageChart({ data, entityLabel = '금융투자' }: Chart
               type="monotone"
               dataKey="ma20"
               name="MA20"
-              stroke="#f59e0b"
+              stroke="#10b981"
               strokeWidth={2}
               dot={false}
               connectNulls={false}
@@ -292,8 +292,8 @@ export function ForeignCorrelationChart({ data, entityLabel = '금융투자' }: 
               type="monotone"
               dataKey="primary"
               name={entityLabel}
-              stroke="#8b5cf6"
-              strokeWidth={1.5}
+              stroke="#fbbf24"
+              strokeWidth={2}
               dot={false}
             />
             <Line
