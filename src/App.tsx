@@ -80,11 +80,11 @@ export default function App() {
   const [dataSource, setDataSource] = useState('시뮬레이션 데이터 (Demo)');
   const [dataUpdatedAt, setDataUpdatedAt] = useState<string | null>(null);
   const [startDate, setStartDate] = useState(() => {
-    const latest = mockData[mockData.length - 1]?.date ?? getKstDateString(new Date());
-    const first = mockData[0]?.date ?? latest;
-    return clampToMinDate(shiftMonths(latest, 3), first);
+    const today = getKstDateString(new Date());
+    const first = mockData[0]?.date ?? today;
+    return clampToMinDate(shiftMonths(today, 3), first);
   });
-  const [endDate, setEndDate] = useState(() => mockData[mockData.length - 1]?.date ?? getKstDateString(new Date()));
+  const [endDate, setEndDate] = useState(() => getKstDateString(new Date()));
   const [activeTab, setActiveTab] = useState<TabId>('overview');
   const [isAnalyzed, setIsAnalyzed] = useState(true);
   const [selectedEntity, setSelectedEntity] = useState<EntityKey>('financialInvestment');
@@ -115,13 +115,13 @@ export default function App() {
 
       const normalized = [...payload.data].sort((a, b) => a.date.localeCompare(b.date));
       const first = normalized[0].date;
-      const latest = normalized[normalized.length - 1].date;
 
+      const today = getKstDateString(new Date());
       setTradingData(normalized);
       setDataSource(payload.meta?.source ?? '네이버 API 업데이트 데이터');
       setDataUpdatedAt(payload.meta?.updatedAtKst ?? null);
-      setStartDate(clampToMinDate(shiftMonths(latest, 3), first));
-      setEndDate(latest);
+      setStartDate(clampToMinDate(shiftMonths(today, 3), first));
+      setEndDate(today);
       setIsAnalyzed(true);
     }
 
