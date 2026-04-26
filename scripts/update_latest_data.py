@@ -245,18 +245,19 @@ def main() -> None:
 
     existing_map, earliest_existing, missing_kospi, earliest_kospi_existing = load_existing_data(out_path)
 
-    needs_backfill = True
-    if earliest_existing:
+    needs_backfill = not bool(existing_map)
+    if earliest_existing and needs_backfill:
         earliest_dt = datetime.strptime(earliest_existing, "%Y-%m-%d").date()
         target_dt = datetime.strptime(HISTORICAL_START_DATE, "%Y-%m-%d").date()
         # If earliest row is within one week from the target start, treat it as covered.
         needs_backfill = (earliest_dt - target_dt).days > 7
     max_pages = BOOTSTRAP_MAX_PAGES if needs_backfill else RECENT_REFRESH_PAGES
+    # Do not force a full KOSPI backfill just because the first legacy rows predate
+    # Naver's available index close history. That made every scheduled refresh crawl
+    # hundreds of old pages and prevented recent chart data from being updated.
     needs_kospi_backfill = (
         needs_backfill
-        or missing_kospi
         or earliest_kospi_existing is None
-        or earliest_kospi_existing > HISTORICAL_START_DATE
     )
     max_pages_kospi = BOOTSTRAP_MAX_PAGES if needs_kospi_backfill else RECENT_REFRESH_PAGES
 

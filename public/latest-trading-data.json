@@ -1,9 +1,9 @@
 {
   "meta": {
     "source": "Naver Finance investor detail + KOSPI close (historical + 24-hour refresh)",
-    "updatedAtKst": "2026-03-20 14:07:55",
+    "updatedAtKst": "2026-04-26 23:07:48",
     "earliestTradingDate": "1997-04-14",
-    "latestTradingDate": "2026-03-20",
+    "latestTradingDate": "2026-04-24",
     "refreshIntervalHours": 24,
     "historicalStartDate": "1997-01-01"
   },
@@ -202,7 +202,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 704.05
+      "kospiClose": null
     },
     {
       "date": "1997-04-30",
@@ -216,7 +216,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 703.23
+      "kospiClose": null
     },
     {
       "date": "1997-05-02",
@@ -230,7 +230,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 706.1
+      "kospiClose": null
     },
     {
       "date": "1997-05-03",
@@ -244,7 +244,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 704.87
+      "kospiClose": null
     },
     {
       "date": "1997-05-06",
@@ -258,7 +258,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 701.57
+      "kospiClose": null
     },
     {
       "date": "1997-05-07",
@@ -272,7 +272,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 689.1
+      "kospiClose": null
     },
     {
       "date": "1997-05-08",
@@ -286,7 +286,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 684.69
+      "kospiClose": null
     },
     {
       "date": "1997-05-09",
@@ -300,7 +300,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 687.62
+      "kospiClose": null
     },
     {
       "date": "1997-05-10",
@@ -314,7 +314,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 678.98
+      "kospiClose": null
     },
     {
       "date": "1997-05-12",
@@ -328,7 +328,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 672.1
+      "kospiClose": null
     },
     {
       "date": "1997-05-13",
@@ -342,7 +342,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 683.86
+      "kospiClose": null
     },
     {
       "date": "1997-05-15",
@@ -356,7 +356,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 699.95
+      "kospiClose": null
     },
     {
       "date": "1997-05-16",
@@ -370,7 +370,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 699.53
+      "kospiClose": null
     },
     {
       "date": "1997-05-17",
@@ -384,7 +384,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 706.25
+      "kospiClose": null
     },
     {
       "date": "1997-05-19",
@@ -398,7 +398,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 721.2
+      "kospiClose": null
     },
     {
       "date": "1997-05-20",
@@ -412,7 +412,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 734.67
+      "kospiClose": null
     },
     {
       "date": "1997-05-21",
@@ -426,7 +426,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 737.71
+      "kospiClose": null
     },
     {
       "date": "1997-05-22",
@@ -440,7 +440,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 724.38
+      "kospiClose": null
     },
     {
       "date": "1997-05-23",
@@ -454,7 +454,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 730.53
+      "kospiClose": null
     },
     {
       "date": "1997-05-24",
@@ -468,7 +468,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 725.17
+      "kospiClose": null
     },
     {
       "date": "1997-05-26",
@@ -482,7 +482,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 718.99
+      "kospiClose": null
     },
     {
       "date": "1997-05-27",
@@ -496,7 +496,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 723.35
+      "kospiClose": null
     },
     {
       "date": "1997-05-28",
@@ -510,7 +510,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 738.12
+      "kospiClose": null
     },
     {
       "date": "1997-05-29",
@@ -524,7 +524,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 742.5
+      "kospiClose": null
     },
     {
       "date": "1997-05-30",
@@ -538,7 +538,7 @@
       "otherFinancial": 0,
       "pension": 0,
       "otherCorporation": 0,
-      "kospiClose": 746.36
+      "kospiClose": null
     },
     {
       "date": "1997-05-31",
@@ -100978,17 +100978,367 @@
     },
     {
       "date": "2026-03-20",
-      "individual": 13332,
-      "foreign": -17946,
-      "institution": 4615,
-      "financialInvestment": 4364,
-      "insurance": -37,
-      "investmentTrust": -587,
-      "bank": -3,
-      "otherFinancial": 67,
-      "pension": 810,
-      "otherCorporation": -1,
-      "kospiClose": 5768.1
+      "individual": 22338,
+      "foreign": -12402,
+      "institution": -10260,
+      "financialInvestment": 4566,
+      "insurance": -14326,
+      "investmentTrust": -1182,
+      "bank": -8,
+      "otherFinancial": 84,
+      "pension": 606,
+      "otherCorporation": 323,
+      "kospiClose": 5781.2
+    },
+    {
+      "date": "2026-03-23",
+      "individual": 70029,
+      "foreign": -36751,
+      "institution": -38173,
+      "financialInvestment": -30239,
+      "insurance": 159,
+      "investmentTrust": -6649,
+      "bank": 64,
+      "otherFinancial": 108,
+      "pension": -1617,
+      "otherCorporation": 4895,
+      "kospiClose": 5405.75
+    },
+    {
+      "date": "2026-03-24",
+      "individual": 7270,
+      "foreign": -19863,
+      "institution": 9683,
+      "financialInvestment": 10178,
+      "insurance": -320,
+      "investmentTrust": -734,
+      "bank": -12,
+      "otherFinancial": 136,
+      "pension": 435,
+      "otherCorporation": 2910,
+      "kospiClose": 5553.92
+    },
+    {
+      "date": "2026-03-25",
+      "individual": -13402,
+      "foreign": -12895,
+      "institution": 23230,
+      "financialInvestment": 23351,
+      "insurance": -312,
+      "investmentTrust": -92,
+      "bank": 2,
+      "otherFinancial": 133,
+      "pension": 147,
+      "otherCorporation": 3067,
+      "kospiClose": 5642.21
+    },
+    {
+      "date": "2026-03-26",
+      "individual": 30598,
+      "foreign": -29370,
+      "institution": -2999,
+      "financialInvestment": 3185,
+      "insurance": 76,
+      "investmentTrust": -3811,
+      "bank": -122,
+      "otherFinancial": 96,
+      "pension": -2423,
+      "otherCorporation": 1771,
+      "kospiClose": 5460.46
+    },
+    {
+      "date": "2026-03-27",
+      "individual": 22596,
+      "foreign": -34286,
+      "institution": 7785,
+      "financialInvestment": 4181,
+      "insurance": 436,
+      "investmentTrust": 3236,
+      "bank": -10,
+      "otherFinancial": 170,
+      "pension": -228,
+      "otherCorporation": 3905,
+      "kospiClose": 5438.87
+    },
+    {
+      "date": "2026-03-30",
+      "individual": 8945,
+      "foreign": -20945,
+      "institution": 8450,
+      "financialInvestment": 7440,
+      "insurance": 93,
+      "investmentTrust": 1674,
+      "bank": -80,
+      "otherFinancial": 133,
+      "pension": -812,
+      "otherCorporation": 3550,
+      "kospiClose": 5277.3
+    },
+    {
+      "date": "2026-03-31",
+      "individual": 24400,
+      "foreign": -38386,
+      "institution": 10251,
+      "financialInvestment": 9477,
+      "insurance": 453,
+      "investmentTrust": 528,
+      "bank": -40,
+      "otherFinancial": 123,
+      "pension": -291,
+      "otherCorporation": 3735,
+      "kospiClose": 5052.46
+    },
+    {
+      "date": "2026-04-01",
+      "individual": -37628,
+      "foreign": -6411,
+      "institution": 40419,
+      "financialInvestment": 34308,
+      "insurance": -136,
+      "investmentTrust": 6145,
+      "bank": 12,
+      "otherFinancial": 281,
+      "pension": -192,
+      "otherCorporation": 3620,
+      "kospiClose": 5478.7
+    },
+    {
+      "date": "2026-04-02",
+      "individual": 12097,
+      "foreign": -1368,
+      "institution": -14517,
+      "financialInvestment": -16900,
+      "insurance": 279,
+      "investmentTrust": 1630,
+      "bank": 75,
+      "otherFinancial": 310,
+      "pension": 91,
+      "otherCorporation": 3788,
+      "kospiClose": 5234.05
+    },
+    {
+      "date": "2026-04-03",
+      "individual": -20952,
+      "foreign": 8035,
+      "institution": 7390,
+      "financialInvestment": 2839,
+      "insurance": 92,
+      "investmentTrust": 4960,
+      "bank": 28,
+      "otherFinancial": 28,
+      "pension": -557,
+      "otherCorporation": 5527,
+      "kospiClose": 5377.3
+    },
+    {
+      "date": "2026-04-06",
+      "individual": -10502,
+      "foreign": -1596,
+      "institution": 8371,
+      "financialInvestment": 7597,
+      "insurance": 99,
+      "investmentTrust": 1373,
+      "bank": -135,
+      "otherFinancial": 288,
+      "pension": -850,
+      "otherCorporation": 3726,
+      "kospiClose": 5450.33
+    },
+    {
+      "date": "2026-04-07",
+      "individual": -3429,
+      "foreign": 3704,
+      "institution": -4001,
+      "financialInvestment": -3918,
+      "insurance": 127,
+      "investmentTrust": 310,
+      "bank": 33,
+      "otherFinancial": 265,
+      "pension": -818,
+      "otherCorporation": 3726,
+      "kospiClose": 5494.78
+    },
+    {
+      "date": "2026-04-08",
+      "individual": -54161,
+      "foreign": 19089,
+      "institution": 27268,
+      "financialInvestment": 29960,
+      "insurance": -648,
+      "investmentTrust": -148,
+      "bank": 60,
+      "otherFinancial": 126,
+      "pension": -2083,
+      "otherCorporation": 7805,
+      "kospiClose": 5872.34
+    },
+    {
+      "date": "2026-04-09",
+      "individual": 2950,
+      "foreign": 18476,
+      "institution": -25125,
+      "financialInvestment": 5040,
+      "insurance": 334,
+      "investmentTrust": 368,
+      "bank": -31117,
+      "otherFinancial": 201,
+      "pension": 49,
+      "otherCorporation": 3698,
+      "kospiClose": 5778.01
+    },
+    {
+      "date": "2026-04-10",
+      "individual": -12280,
+      "foreign": 10641,
+      "institution": -2031,
+      "financialInvestment": 868,
+      "insurance": -215,
+      "investmentTrust": -2196,
+      "bank": -218,
+      "otherFinancial": 145,
+      "pension": -416,
+      "otherCorporation": 3670,
+      "kospiClose": 5858.87
+    },
+    {
+      "date": "2026-04-13",
+      "individual": 7173,
+      "foreign": -4579,
+      "institution": -6698,
+      "financialInvestment": -4814,
+      "insurance": -295,
+      "investmentTrust": -194,
+      "bank": 208,
+      "otherFinancial": 130,
+      "pension": -1733,
+      "otherCorporation": 4104,
+      "kospiClose": 5808.62
+    },
+    {
+      "date": "2026-04-14",
+      "individual": -23919,
+      "foreign": 8276,
+      "institution": 12545,
+      "financialInvestment": 13513,
+      "insurance": -652,
+      "investmentTrust": 103,
+      "bank": -129,
+      "otherFinancial": -35,
+      "pension": -256,
+      "otherCorporation": 3098,
+      "kospiClose": 5967.75
+    },
+    {
+      "date": "2026-04-15",
+      "individual": -9400,
+      "foreign": 4973,
+      "institution": 368,
+      "financialInvestment": 8214,
+      "insurance": -1459,
+      "investmentTrust": -5294,
+      "bank": 9,
+      "otherFinancial": 14,
+      "pension": -1116,
+      "otherCorporation": 4059,
+      "kospiClose": 6091.39
+    },
+    {
+      "date": "2026-04-16",
+      "individual": -18050,
+      "foreign": 4814,
+      "institution": 10783,
+      "financialInvestment": 12460,
+      "insurance": -447,
+      "investmentTrust": -772,
+      "bank": -7,
+      "otherFinancial": -153,
+      "pension": -299,
+      "otherCorporation": 2453,
+      "kospiClose": 6226.05
+    },
+    {
+      "date": "2026-04-17",
+      "individual": 14464,
+      "foreign": -19974,
+      "institution": 1501,
+      "financialInvestment": 4343,
+      "insurance": -622,
+      "investmentTrust": -1253,
+      "bank": -85,
+      "otherFinancial": -125,
+      "pension": -757,
+      "otherCorporation": 4009,
+      "kospiClose": 6191.92
+    },
+    {
+      "date": "2026-04-20",
+      "individual": -3158,
+      "foreign": -2338,
+      "institution": 2938,
+      "financialInvestment": 5183,
+      "insurance": -610,
+      "investmentTrust": -1676,
+      "bank": 33,
+      "otherFinancial": -72,
+      "pension": 80,
+      "otherCorporation": 2558,
+      "kospiClose": 6219.09
+    },
+    {
+      "date": "2026-04-21",
+      "individual": -19204,
+      "foreign": 11565,
+      "institution": 9181,
+      "financialInvestment": 9753,
+      "insurance": -1056,
+      "investmentTrust": 117,
+      "bank": -206,
+      "otherFinancial": -50,
+      "pension": 622,
+      "otherCorporation": -1541,
+      "kospiClose": 6388.47
+    },
+    {
+      "date": "2026-04-22",
+      "individual": 11984,
+      "foreign": -6762,
+      "institution": -4046,
+      "financialInvestment": -4102,
+      "insurance": -270,
+      "investmentTrust": -720,
+      "bank": 55,
+      "otherFinancial": -5,
+      "pension": 995,
+      "otherCorporation": -1176,
+      "kospiClose": 6417.93
+    },
+    {
+      "date": "2026-04-23",
+      "individual": 4514,
+      "foreign": -820,
+      "institution": -2965,
+      "financialInvestment": 177,
+      "insurance": -1027,
+      "investmentTrust": -2299,
+      "bank": -14,
+      "otherFinancial": 1,
+      "pension": 197,
+      "otherCorporation": -728,
+      "kospiClose": 6475.81
+    },
+    {
+      "date": "2026-04-24",
+      "individual": 11832,
+      "foreign": -19496,
+      "institution": 8053,
+      "financialInvestment": 10383,
+      "insurance": -409,
+      "investmentTrust": -1332,
+      "bank": -390,
+      "otherFinancial": 3,
+      "pension": -202,
+      "otherCorporation": -389,
+      "kospiClose": 6475.63
     }
   ]
 }
