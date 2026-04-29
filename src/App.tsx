@@ -81,7 +81,7 @@ function minDate(a: string, b: string): string {
 
 export default function App() {
   const [tradingData, setTradingData] = useState<DailyTradeData[]>(mockData);
-  const [dataSource, setDataSource] = useState('?쒕??덉씠???곗씠??(Demo)');
+  const [dataSource, setDataSource] = useState('데모 데이터');
   const [dataUpdatedAt, setDataUpdatedAt] = useState<string | null>(null);
   const [startDate, setStartDate] = useState(() => {
     const today = getKstDateString(new Date());
@@ -94,10 +94,10 @@ export default function App() {
   const [selectedEntity, setSelectedEntity] = useState<EntityKey>('financialInvestment');
 
   const entities: { id: EntityKey; label: string; desc: string }[] = [
-    { id: 'financialInvestment', label: '湲덉쑖?ъ옄', desc: '湲곌? 以묒떖 湲덉쑖?ъ옄' },
+    { id: 'financialInvestment', label: '금융투자', desc: '기관 중심 금융투자 수급' },
     { id: 'foreign', label: '외국인', desc: '해외 자본 수급' },
     { id: 'combined', label: '금융투자+외국인', desc: '금융투자와 외국인 합산' },
-    { id: 'individual', label: '媛쒖씤', desc: '媛쒖씤 ?ъ옄???섍툒' },
+    { id: 'individual', label: '개인', desc: '개인 투자자 수급' },
   ];
 
   const currentEntity = entities.find((e) => e.id === selectedEntity)!;
@@ -216,17 +216,17 @@ export default function App() {
   const presetRanges = useMemo(
     () => [
       {
-        label: '理쒓렐 1媛쒖썡',
+        label: '최근 1개월',
         start: clampToMinDate(shiftMonths(shortRangeEndDate, 1), earliestDataDate),
         end: shortRangeEndDate,
       },
       {
-        label: '理쒓렐 3媛쒖썡',
+        label: '최근 3개월',
         start: clampToMinDate(shiftMonths(shortRangeEndDate, 3), earliestDataDate),
         end: shortRangeEndDate,
       },
       {
-        label: '理쒓렐 6媛쒖썡',
+        label: '최근 6개월',
         start: clampToMinDate(shiftMonths(latestDataDate, 6), earliestDataDate),
         end: latestDataDate,
       },
@@ -235,17 +235,17 @@ export default function App() {
         start: clampToMinDate(shiftMonths(latestDataDate, 12), earliestDataDate),
         end: latestDataDate,
       },
-      { label: '?꾩껜', start: earliestDataDate, end: latestDataDate },
+      { label: '전체', start: earliestDataDate, end: latestDataDate },
     ],
     [shortRangeEndDate, earliestDataDate, latestDataDate]
   );
 
   const tabs: { id: TabId; label: string; icon: React.ElementType }[] = [
-    { id: 'overview', label: '媛쒖슂', icon: BarChart3 },
-    { id: 'charts', label: '李⑦듃遺꾩꽍', icon: Activity },
-    { id: 'streaks', label: '?곗냽留ㅻ룄', icon: TrendingDown },
+    { id: 'overview', label: '개요', icon: BarChart3 },
+    { id: 'charts', label: '차트분석', icon: Activity },
+    { id: 'streaks', label: '연속매도', icon: TrendingDown },
     { id: 'data', label: '데이터', icon: Database },
-    { id: 'benchmark', label: '踰ㅼ튂留덊궧', icon: Globe2 },
+    { id: 'benchmark', label: '벤치마킹', icon: Globe2 },
   ];
 
   return (
@@ -274,15 +274,15 @@ export default function App() {
                   <Zap className="w-5 h-5 text-white" />
                 </div>
                 <h1 className="text-xl md:text-3xl font-black bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                  KOSPI '{currentEntity.label}' ?섍툒 遺꾩꽍
+                  KOSPI '{currentEntity.label}' 수급 분석
                 </h1>
               </div>
               <div className="flex flex-col">
                 <p className="text-gray-400 text-[10px] sm:text-xs">
-                  {currentEntity.desc} Flow Analyzer 쨌 由ъ뒪???섍툒 遺꾩꽍
+                  {currentEntity.desc} Flow Analyzer - 리스크 수급 분석
                 </p>
                 <p className="text-gray-500 text-[9px] sm:text-[11px] leading-tight mt-0.5">
-                  嫄곕옒二쇱껜 以?{currentEntity.label}?????留ㅻ룄留ㅼ닔 異붿꽭遺꾩꽍?쇰줈 二쇱떇湲됰씫 ?덈갑 李⑥썝
+                  거래주체 중 {currentEntity.label}의 매도/매수 추세 분석으로 주식급락 예방 관점
                 </p>
               </div>
             </div>
@@ -312,7 +312,8 @@ export default function App() {
             <div className="space-y-1">
               <label className="block text-[10px] text-gray-400 font-medium">
                 <CalendarDays className="w-3 h-3 inline mr-1" />
-                ?쒖옉??              </label>
+                시작일
+              </label>
               <input
                 type="date"
                 value={startDate}
@@ -328,7 +329,8 @@ export default function App() {
             <div className="space-y-1">
               <label className="block text-[10px] text-gray-400 font-medium">
                 <CalendarDays className="w-3 h-3 inline mr-1" />
-                醫낅즺??              </label>
+                종료일
+              </label>
               <input
                 type="date"
                 value={endDate}
@@ -346,7 +348,7 @@ export default function App() {
               className="col-span-2 sm:col-auto flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded-lg text-xs font-bold transition-all shadow-lg shadow-blue-500/20 active:scale-95"
             >
               <Search className="w-3.5 h-3.5" />
-              遺꾩꽍?섍린
+              분석하기
             </button>
 
             {/* Preset ranges */}
@@ -377,26 +379,28 @@ export default function App() {
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border border-emerald-500/40 text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 hover:text-emerald-200 transition-all"
               >
                 <Globe2 className="w-3.5 h-3.5" />
-                ?ㅼ씠踰?              </a>
+                네이버
+              </a>
             </div>
           </div>
 
           {/* Data info */}
           {isAnalyzed && (
             <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] text-gray-500">
-              <span className="flex items-center gap-1">?뱤 {analyzedStartDate} ~ {analyzedEndDate}</span>
+              <span className="flex items-center gap-1">기간 {analyzedStartDate} ~ {analyzedEndDate}</span>
               <span className="flex items-center gap-1">거래일수 {stats.tradingDays}일</span>
               <span className="text-emerald-400/80 flex items-center gap-1">
-                ?봽
+                출처
                 <a
                   href="https://finance.naver.com/"
                   target="_blank"
                   rel="noreferrer"
                   className="text-emerald-400 hover:text-emerald-300 hover:underline"
                 >
-                  ?ㅼ씠踰?                </a>
+                  네이버
+                </a>
               </span>
-              {dataUpdatedAt && <span>?븩 {dataUpdatedAt.slice(5, 16)}</span>}
+              {dataUpdatedAt && <span>업데이트 {dataUpdatedAt.slice(5, 16)}</span>}
               {isDataLagging && (
                 <span className="text-amber-300">
                   최신 데이터 기준일: {latestDataDate} (오늘: {todayKst})
@@ -411,19 +415,20 @@ export default function App() {
           <div className="flex flex-col items-center justify-center py-32 text-center">
             <Search className="w-16 h-16 text-gray-600 mb-4" />
             <h2 className="text-xl font-bold text-gray-400 mb-2">
-              湲곌컙???좏깮?섍퀬 遺꾩꽍?섍린瑜??대┃?섏꽭??            </h2>
+              기간을 선택하고 분석하기를 클릭하세요.
+            </h2>
             <p className="text-gray-500 text-sm">
-              ?좎쭨 踰붿쐞瑜??ㅼ젙?섍굅???꾨━??踰꾪듉???ъ슜?????덉뒿?덈떎
+              날짜 범위를 조정하거나 프리셋 버튼을 사용해도 됩니다.
             </p>
           </div>
         ) : filteredData.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 text-center">
             <Database className="w-16 h-16 text-gray-600 mb-4" />
             <h2 className="text-xl font-bold text-gray-400 mb-2">
-              ?대떦 湲곌컙???곗씠?곌? ?놁뒿?덈떎
+              해당 기간에는 데이터가 없습니다
             </h2>
             <p className="text-gray-500 text-sm">
-              ?ㅻⅨ 湲곌컙???좏깮??二쇱꽭??({earliestDataDate} ~ {latestDataDate})
+              다른 기간을 선택해주세요 ({earliestDataDate} ~ {latestDataDate})
             </p>
           </div>
         ) : (
@@ -475,23 +480,23 @@ export default function App() {
                 {/* Market Interpretation Guide */}
                 <div className="rounded-xl border border-gray-700/50 bg-gray-800/50 backdrop-blur-sm p-5">
                   <h3 className="text-white font-bold mb-3 flex items-center gap-2">
-                    <span className="text-lg">?뱰</span> ?쒖옣 ?댁꽍 媛?대뱶
+                    <span className="text-lg">📌</span> 시장 해석 가이드
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-3">
-                      <h4 className="text-sm font-bold text-amber-400">?좑툘 ?섎씫 ?꾪뿕 ?좏샇</h4>
+                      <h4 className="text-sm font-bold text-amber-400">주가 하락 위험 신호</h4>
                       <div className="space-y-2 text-sm text-gray-400">
-                        <p>??{currentEntity.label} 5???곗냽 ?쒕ℓ???좎?</p>
-                        <p>??肄붿뒪??20?쇱꽑 ?섑뼢 ?댄깉 ??諛⑹뼱???ъ???沅뚭퀬</p>
-                        <p>???洹쒕え ?⑥씪???쒕ℓ????쬆 ??湲됰씫 二쇱쓽</p>
+                        <p>• {currentEntity.label} 5일 연속 순매도는 경고 신호입니다.</p>
+                        <p>• 코스피 20일선 하향 이탈 시 방어적 대응을 권고합니다.</p>
+                        <p>• 대규모 단일일 순매도 발생 시 급락을 주의하세요.</p>
                       </div>
                     </div>
                     <div className="space-y-3">
-                      <h4 className="text-sm font-bold text-emerald-400">?뱢 諛섎벑 媛???좏샇</h4>
+                      <h4 className="text-sm font-bold text-emerald-400">반등 가능 신호</h4>
                       <div className="space-y-2 text-sm text-gray-400">
-                        <p>??7?? ?곗냽 ?쒕ℓ?????洹쒕え ?쒕ℓ???꾪솚</p>
-                        <p>??{currentEntity.label} ?륁빱踰꾨쭅 媛?μ꽦 ??湲됰컲??援ш컙</p>
-                        <p>??MA5媛 MA20 ?곹뼢 ?뚰뙆 ??異붿꽭 ?꾪솚 ?좏샇</p>
+                        <p>• 7일 이상 순매도 이후 대규모 순매수 전환</p>
+                        <p>• {currentEntity.label} 숏커버링 가능성이 높은 구간</p>
+                        <p>• MA5가 MA20을 상향 돌파하면 추세 전환 신호</p>
                       </div>
                     </div>
                   </div>
@@ -516,49 +521,51 @@ export default function App() {
 
                 {/* Streak Pattern Guide */}
                 <div className="rounded-xl border border-gray-700/50 bg-gray-800/50 backdrop-blur-sm p-5">
-                  <h3 className="text-white font-bold mb-4">?곗냽 ?쒕ℓ???⑦꽩蹂??쒖옣 諛섏쓳 ({currentEntity.label})</h3>
+                  <h3 className="text-white font-bold mb-4">연속 순매도 패턴별 시장 반응 ({currentEntity.label})</h3>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b border-gray-700">
-                          <th className="text-left py-3 px-4 text-gray-400 font-medium">?⑦꽩</th>
-                          <th className="text-left py-3 px-4 text-gray-400 font-medium">?쒖옣 諛섏쓳</th>
+                          <th className="text-left py-3 px-4 text-gray-400 font-medium">패턴</th>
+                          <th className="text-left py-3 px-4 text-gray-400 font-medium">시장 반응</th>
                           <th className="text-left py-3 px-4 text-gray-400 font-medium">위험도</th>
                         </tr>
                       </thead>
                       <tbody className="text-gray-300">
                         <tr className="border-b border-gray-700/30">
                           <td className="py-3 px-4 font-medium">3일 연속 순매도</td>
-                          <td className="py-3 px-4">?④린 議곗젙 媛?μ꽦 利앷?</td>
+                          <td className="py-3 px-4">단기 조정 가능성 증가</td>
                           <td className="py-3 px-4">
                             <span className="px-2 py-0.5 rounded-full text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                              二쇱쓽
+                              주의
                             </span>
                           </td>
                         </tr>
                         <tr className="border-b border-gray-700/30">
                           <td className="py-3 px-4 font-medium">5일 연속 순매도</td>
-                          <td className="py-3 px-4">?꾨줈洹몃옩 留ㅻ룄 ?숇컲 ???섎씫 ?뺣쪧 ?곸듅</td>
+                          <td className="py-3 px-4">프로그램 매도 동반 시 하락 압력 확대</td>
                           <td className="py-3 px-4">
                             <span className="px-2 py-0.5 rounded-full text-xs bg-orange-500/20 text-orange-400 border border-orange-500/30">
-                              ?꾪뿕
+                              위험
                             </span>
                           </td>
                         </tr>
                         <tr className="border-b border-gray-700/30">
                           <td className="py-3 px-4 font-medium">7일 이상 순매도</td>
-                          <td className="py-3 px-4">吏??蹂?숈꽦 湲됰벑 援ш컙 媛?μ꽦</td>
+                          <td className="py-3 px-4">지수 변동성 급등 구간 가능성</td>
                           <td className="py-3 px-4">
                             <span className="px-2 py-0.5 rounded-full text-xs bg-rose-500/20 text-rose-400 border border-rose-500/30">
-                              怨좎쐞??                            </span>
+                              고위험
+                            </span>
                           </td>
                         </tr>
                         <tr>
-                          <td className="py-3 px-4 font-medium">?⑥씪??-1議??댁긽</td>
-                          <td className="py-3 px-4">湲됰씫 援ш컙怨??숉뻾?섎뒗 寃쎌슦 ?ㅼ닔</td>
+                          <td className="py-3 px-4 font-medium">단일일 -1조 이상</td>
+                          <td className="py-3 px-4">급락 구간과 동행하는 경우 다수</td>
                           <td className="py-3 px-4">
                             <span className="px-2 py-0.5 rounded-full text-xs bg-rose-500/20 text-rose-400 border border-rose-500/30">
-                              怨좎쐞??                            </span>
+                              고위험
+                            </span>
                           </td>
                         </tr>
                       </tbody>
@@ -592,8 +599,8 @@ export default function App() {
 
         {/* Footer */}
         <footer className="mt-12 pt-6 border-t border-gray-800 text-center text-gray-500 text-xs pb-6">
-          <p>?좑툘 蹂?遺꾩꽍 ?뺣낫???ъ옄 李멸퀬?⑹씠硫??ъ옄 ?먯씡??蹂댁옣?섏? ?딆뒿?덈떎.</p>
-          <p className="mt-1">?곗씠??異쒖쿂: {dataSource}</p>
+          <p>주가 및 분석 정보는 투자 참고용이며, 투자 수익을 보장하지 않습니다.</p>
+          <p className="mt-1">데이터 출처: {dataSource}</p>
         </footer>
       </div>
     </div>

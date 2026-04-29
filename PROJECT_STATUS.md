@@ -27,3 +27,4 @@
 - Streamlit 반영을 위해 원격 푸시 진행
 
 - streamlit_app.py fallback stale 판정을 파일 mtime에서 JSON meta.updatedAtKst 기준으로 개선(배포 직후에도 실제 데이터 노후 감지)
+- App.tsx 전반의 한글 모지바케(깨진 문자열) 복구 및 UI 문구 정상화
