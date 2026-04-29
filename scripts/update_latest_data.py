@@ -116,10 +116,10 @@ def fetch_detail_trend_map(max_pages: int, min_date: str) -> Dict[str, Dict[str,
                 break
             except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
                 if attempt < MAX_RETRIES - 1:
-                    print(f"  ⚠️ 재시도 {attempt + 1}/{MAX_RETRIES} (페이지 {page})")
+                    print(f"  [WARN] 재시도 {attempt + 1}/{MAX_RETRIES} (페이지 {page})")
                     continue
                 else:
-                    print(f"  ❌ 최대 재시도 횟수 초과 (페이지 {page}): {e}")
+                    print(f"  [ERROR] 최대 재시도 횟수 초과 (페이지 {page}): {e}")
                     return detail_map
 
         rows = parse_detail_rows(response.text)
@@ -171,10 +171,10 @@ def fetch_kospi_close_map(max_pages: int, min_date: str) -> Dict[str, float]:
                 break
             except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
                 if attempt < MAX_RETRIES - 1:
-                    print(f"  ⚠️ 재시도 {attempt + 1}/{MAX_RETRIES} (KOSPI 페이지 {page})")
+                    print(f"  [WARN] 재시도 {attempt + 1}/{MAX_RETRIES} (KOSPI 페이지 {page})")
                     continue
                 else:
-                    print(f"  ❌ KOSPI 최대 재시도 횟수 초과 (페이지 {page}): {e}")
+                    print(f"  [ERROR] KOSPI 최대 재시도 횟수 초과 (페이지 {page}): {e}")
                     return close_map
 
         rows = parse_kospi_rows(response.text)

@@ -20,3 +20,9 @@
 ## 참고 이력
 - 이전 조치로 `scripts/update_latest_data.py`의 백필 조건은 이미 수정되어 `public/latest-trading-data.json` 최신화 가능 상태였음
 - 이번 조치는 "UI 종료일만 오늘로 바뀌고 실제 그래프/데이터는 과거로 남는" 연결 문제를 직접 해결하는 목적
+
+## 2026-04-29 배포 반영 추가
+- scripts/update_latest_data.py 로그 문자열을 ASCII로 교체(cp949 콘솔 예외 방지)
+- 데이터 수집 재실행으로 public/latest-trading-data.json 최신일을 2026-04-29로 갱신
+- Streamlit 반영을 위해 원격 푸시 진행
+
