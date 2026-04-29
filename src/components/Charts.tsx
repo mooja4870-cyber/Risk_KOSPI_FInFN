@@ -1,4 +1,4 @@
-import {
+﻿import {
   Bar,
   LineChart,
   Line,
@@ -14,8 +14,18 @@ import {
   Legend,
   Cell,
 } from 'recharts';
-import { formatNumber, formatDateKR } from '../utils/analysis';
+import { useMemo, useState } from 'react';
+import {
+  formatNumber,
+  formatDateKR,
+  aggregateMovingAverageSeries,
+  aggregateTradeData,
+  calculateCorrelationSeries,
+  type EntityKey,
+  type CandleResolution,
+} from '../utils/analysis';
 import type { IndexDataPoint } from '../data/benchmarkStaticData';
+import type { DailyTradeData } from '../data/mockData';
 
 interface ChartDataPoint {
   date: string;
@@ -32,8 +42,8 @@ interface ChartDataPoint {
 interface ChartsProps {
   data: ChartDataPoint[];
   compact?: boolean;
-  entityLabel?: string; // 주 분석 대상 레이블 (예: "금융투자" or "외국인")
-  crashDate?: string; // 충격일 수직선 표시 (YYYY-MM-DD)
+  entityLabel?: string; // 二?遺꾩꽍 ????덉씠釉?(?? "湲덉쑖?ъ옄" or "?멸뎅??)
+  crashDate?: string; // 異⑷꺽???섏쭅???쒖떆 (YYYY-MM-DD)
 }
 
 const CustomTooltip = ({ active, payload, label }: any) => {
@@ -59,8 +69,10 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-export function DailyBarChart({ data, compact = false, entityLabel = '금융투자', crashDate }: ChartsProps) {
-  const chartData = data.map((d) => ({
+export function DailyBarChart({ data, compact = false, entityLabel = '湲덉쑖?ъ옄', crashDate }: ChartsProps) {
+  const [resolution, setResolution] = useState<CandleResolution>('day');
+  const aggregated = useMemo(() => aggregateMovingAverageSeries(data, resolution), [data, resolution]);
+  const chartData = aggregated.map((d) => ({
     date: d.date,
     value: d.value,
     kospiClose: d.kospiClose,
@@ -69,8 +81,29 @@ export function DailyBarChart({ data, compact = false, entityLabel = '금융투�
 
   return (
     <div className="rounded-xl border border-gray-700/50 bg-gray-800/50 backdrop-blur-sm p-5">
-      <h3 className="text-white font-bold mb-1">{entityLabel} 순매수/순매도 및 KOSPI 추이</h3>
-      <p className="text-gray-400 text-xs mb-4">막대: {entityLabel} 순매수/순매도(억원) · 선: KOSPI 지수(pt)</p>
+      <div className="flex items-start justify-between gap-3 mb-1">
+        <h3 className="text-white font-bold">{entityLabel} ?쒕ℓ???쒕ℓ??諛?KOSPI 異붿씠</h3>
+        <div className="flex bg-gray-900/80 p-1 rounded-xl border border-gray-700/50">
+          {[
+            { value: 'day', label: '일봉' },
+            { value: 'week', label: '주봉' },
+            { value: 'month', label: '월봉' },
+          ].map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => setResolution(opt.value as CandleResolution)}
+              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                resolution === opt.value
+                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow'
+                  : 'text-gray-500 hover:text-gray-300'
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <p className="text-gray-400 text-xs mb-4">留됰?: {entityLabel} ?쒕ℓ???쒕ℓ???듭썝) 쨌 ?? KOSPI 吏??pt)</p>
       <div className={compact ? 'h-[300px] sm:h-[357px]' : 'h-60 sm:h-72'}>
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={chartData} barCategoryGap="15%">
@@ -129,7 +162,7 @@ export function DailyBarChart({ data, compact = false, entityLabel = '금융투�
   );
 }
 
-export function CumulativeChart({ data, compact = false, entityLabel = '금융투자' }: ChartsProps) {
+export function CumulativeChart({ data, compact = false, entityLabel = '湲덉쑖?ъ옄' }: ChartsProps) {
   const chartData = data.map((d) => ({
     date: d.date,
     cumulative: d.cumulative,
@@ -140,8 +173,8 @@ export function CumulativeChart({ data, compact = false, entityLabel = '금융�
 
   return (
     <div className="rounded-xl border border-gray-700/50 bg-gray-800/50 backdrop-blur-sm p-5">
-      <h3 className="text-white font-bold mb-1">{entityLabel} 누적 순매수 추이</h3>
-      <p className="text-gray-400 text-xs mb-4">Cumulative {entityLabel} Position (억원)</p>
+      <h3 className="text-white font-bold mb-1">{entityLabel} ?꾩쟻 ?쒕ℓ??異붿씠</h3>
+      <p className="text-gray-400 text-xs mb-4">Cumulative {entityLabel} Position (?듭썝)</p>
       <div className={compact ? 'h-[200px] sm:h-[248px]' : 'h-60 sm:h-72'}>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData}>
@@ -189,7 +222,7 @@ export function CumulativeChart({ data, compact = false, entityLabel = '금융�
   );
 }
 
-export function MovingAverageChart({ data, entityLabel = '금융투자' }: ChartsProps) {
+export function MovingAverageChart({ data, entityLabel = '湲덉쑖?ъ옄' }: ChartsProps) {
   const chartData = data.map((d) => ({
     date: d.date,
     ma5: d.ma5 !== null ? Math.round(d.ma5) : null,
@@ -198,8 +231,8 @@ export function MovingAverageChart({ data, entityLabel = '금융투자' }: Chart
 
   return (
     <div className="rounded-xl border border-gray-700/50 bg-gray-800/50 backdrop-blur-sm p-5">
-      <h3 className="text-white font-bold mb-1">{entityLabel} 이동평균 방향성 분석</h3>
-      <p className="text-gray-400 text-xs mb-4">5일 / 20일 이동평균 (MA5 &lt; MA20 = 매도 압력 우세)</p>
+      <h3 className="text-white font-bold mb-1">{entityLabel} ?대룞?됯퇏 諛⑺뼢??遺꾩꽍</h3>
+      <p className="text-gray-400 text-xs mb-4">5??/ 20???대룞?됯퇏 (MA5 &lt; MA20 = 留ㅻ룄 ?뺣젰 ?곗꽭)</p>
       <div className="h-60 sm:h-72">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData}>
@@ -246,19 +279,19 @@ export function MovingAverageChart({ data, entityLabel = '금융투자' }: Chart
   );
 }
 
-export function ForeignCorrelationChart({ data, entityLabel = '금융투자' }: ChartsProps) {
+export function ForeignCorrelationChart({ data, entityLabel = '湲덉쑖?ъ옄' }: ChartsProps) {
   const counterpartLabel = entityLabel === '금융투자' ? '외국인' : '금융투자';
   const chartData = data.map((d) => ({
     date: d.date,
     primary: d.value,
-    counterpart: entityLabel === '금융투자' ? d.foreign : d.financialInvestment,
+    counterpart: entityLabel === '湲덉쑖?ъ옄' ? d.foreign : d.financialInvestment,
     kospiClose: d.kospiClose,
   }));
 
   return (
     <div className="rounded-xl border border-gray-700/50 bg-gray-800/50 backdrop-blur-sm p-5">
-      <h3 className="text-white font-bold mb-1">{entityLabel} vs {counterpartLabel} 수급 및 KOSPI 비교</h3>
-      <p className="text-gray-400 text-xs mb-4">선: {entityLabel}/{counterpartLabel}(억원) · 하늘색 선: KOSPI 지수(pt)</p>
+      <h3 className="text-white font-bold mb-1">{entityLabel} vs {counterpartLabel} ?섍툒 諛?KOSPI 鍮꾧탳</h3>
+      <p className="text-gray-400 text-xs mb-4">?? {entityLabel}/{counterpartLabel}(?듭썝) 쨌 ?섎뒛???? KOSPI 吏??pt)</p>
       <div className="h-60 sm:h-72">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={chartData}>
@@ -323,11 +356,11 @@ export function ForeignCorrelationChart({ data, entityLabel = '금융투자' }: 
   );
 }
 
-// ── 해외지수 전용 선 차트 (S&P500, DJIA 등) ──────────────────────────────────
+// ?? ?댁쇅吏???꾩슜 ??李⑦듃 (S&P500, DJIA ?? ??????????????????????????????????
 interface IndexLineChartProps {
   data: IndexDataPoint[];
-  indexLabel: string;  // 범례 표시명 (예: "S&P500", "DJIA")
-  crashDate?: string;  // 기준일 (수직선): 예 "1987-10-19"
+  indexLabel: string;  // 踰붾? ?쒖떆紐?(?? "S&P500", "DJIA")
+  crashDate?: string;  // 湲곗???(?섏쭅??: ??"1987-10-19"
   color?: string;
 }
 
@@ -353,8 +386,8 @@ export function IndexLineChart({ data, indexLabel, crashDate, color = '#f59e0b' 
 
   return (
     <div className="rounded-xl border border-gray-700/50 bg-gray-800/50 backdrop-blur-sm p-5">
-      <h3 className="text-white font-bold mb-1">{indexLabel} 지수 추이</h3>
-      <p className="text-gray-400 text-xs mb-4">선: {indexLabel} 종가</p>
+      <h3 className="text-white font-bold mb-1">{indexLabel} 吏??異붿씠</h3>
+      <p className="text-gray-400 text-xs mb-4">?? {indexLabel} 醫낃?</p>
       <div className="h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data}>
@@ -405,10 +438,7 @@ export function IndexLineChart({ data, indexLabel, crashDate, color = '#f59e0b' 
   );
 }
 
-// ── 거래주체-코스피 방향 일치율 & 롤링 상관계수 차트 ────────────────────────
-import { useState } from 'react';
-import { calculateCorrelationSeries, type EntityKey } from '../utils/analysis';
-import type { DailyTradeData } from '../data/mockData';
+// ?? 嫄곕옒二쇱껜-肄붿뒪??諛⑺뼢 ?쇱튂??& 濡ㅻ쭅 ?곴?怨꾩닔 李⑦듃 ????????????????????????
 
 interface CorrelationChartProps {
   data: DailyTradeData[];
@@ -446,52 +476,75 @@ const CorrelationTooltip = ({ active, payload, label }: any) => {
 
 export function CorrelationChart({ data, entityKey, entityLabel }: CorrelationChartProps) {
   const [window, setWindow] = useState(10);
+  const [resolution, setResolution] = useState<CandleResolution>('day');
+  const aggregated = useMemo(() => aggregateTradeData(data, resolution), [data, resolution]);
 
-  const series = calculateCorrelationSeries(data, entityKey, window);
+  const series = calculateCorrelationSeries(aggregated, entityKey, window);
 
   return (
     <div className="rounded-xl border border-gray-700/50 bg-gray-800/50 backdrop-blur-sm p-5">
-      {/* 헤더 */}
+      {/* ?ㅻ뜑 */}
       <div className="flex flex-wrap items-start justify-between gap-3 mb-1">
         <div>
           <h3 className="text-white font-bold">
-            {entityLabel} ↔ KOSPI 방향 일치율 &amp; 상관계수
+            {entityLabel} ??KOSPI 諛⑺뼢 ?쇱튂??&amp; ?곴?怨꾩닔
           </h3>
           <p className="text-gray-400 text-xs mt-0.5">
-            파란선: {window}일 방향 일치율(%) · 주황선: {window}일 롤링 피어슨 상관계수(-1~+1)
+            ?뚮??? {window}??諛⑺뼢 ?쇱튂??%) 쨌 二쇳솴?? {window}??濡ㅻ쭅 ?쇱뼱???곴?怨꾩닔(-1~+1)
           </p>
         </div>
-        {/* 창 크기 토글 */}
-        <div className="flex bg-gray-900/80 p-1 rounded-xl border border-gray-700/50">
-          {WINDOW_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => setWindow(opt.value)}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                window === opt.value
-                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow'
-                  : 'text-gray-500 hover:text-gray-300'
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
+        {/* 李??ш린 ?좉? */}
+        <div className="flex items-center gap-2">
+          <div className="flex bg-gray-900/80 p-1 rounded-xl border border-gray-700/50">
+            {[
+              { value: 'day', label: '일봉' },
+              { value: 'week', label: '주봉' },
+              { value: 'month', label: '월봉' },
+            ].map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setResolution(opt.value as CandleResolution)}
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                  resolution === opt.value
+                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow'
+                    : 'text-gray-500 hover:text-gray-300'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+          <div className="flex bg-gray-900/80 p-1 rounded-xl border border-gray-700/50">
+            {WINDOW_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setWindow(opt.value)}
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                  window === opt.value
+                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow'
+                    : 'text-gray-500 hover:text-gray-300'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* 설명 박스 */}
+      {/* ?ㅻ챸 諛뺤뒪 */}
       <div className="mb-4 flex flex-wrap gap-3 text-[11px]">
         <span className="flex items-center gap-1.5 text-blue-400">
           <span className="inline-block w-4 h-0.5 bg-blue-400" />
-          방향 일치율 50% 이상 = 동행
+          諛⑺뼢 ?쇱튂??50% ?댁긽 = ?숉뻾
         </span>
         <span className="flex items-center gap-1.5 text-amber-400">
           <span className="inline-block w-4 h-0.5 bg-amber-400" />
-          상관계수 +0.5↑ = 강한 양의 상관
+          ?곴?怨꾩닔 +0.5??= 媛뺥븳 ?묒쓽 ?곴?
         </span>
         <span className="flex items-center gap-1.5 text-rose-400">
           <span className="inline-block w-4 h-0.5 bg-rose-400 border-dashed" />
-          상관계수 0선 = 무상관
+          ?곴?怨꾩닔 0??= 臾댁긽愿
         </span>
       </div>
 
@@ -506,7 +559,7 @@ export function CorrelationChart({ data, entityKey, entityLabel }: CorrelationCh
               interval={Math.max(Math.floor(series.length / 12), 0)}
               axisLine={{ stroke: '#4b5563' }}
             />
-            {/* 왼쪽 Y축: 방향 일치율 (0~100%) */}
+            {/* ?쇱そ Y異? 諛⑺뼢 ?쇱튂??(0~100%) */}
             <YAxis
               yAxisId="agree"
               domain={[0, 100]}
@@ -514,7 +567,7 @@ export function CorrelationChart({ data, entityKey, entityLabel }: CorrelationCh
               axisLine={{ stroke: '#1e40af' }}
               tickFormatter={(v) => `${v}%`}
             />
-            {/* 오른쪽 Y축: 피어슨 상관계수 (-1~+1) */}
+            {/* ?ㅻⅨ履?Y異? ?쇱뼱???곴?怨꾩닔 (-1~+1) */}
             <YAxis
               yAxisId="corr"
               orientation="right"
@@ -526,30 +579,30 @@ export function CorrelationChart({ data, entityKey, entityLabel }: CorrelationCh
             <Tooltip content={<CorrelationTooltip />} />
             <Legend wrapperStyle={{ fontSize: '12px' }} />
 
-            {/* 방향 일치율 50% 기준선 */}
+            {/* 諛⑺뼢 ?쇱튂??50% 湲곗???*/}
             <ReferenceLine yAxisId="agree" y={50} stroke="#6b7280" strokeDasharray="4 4"
               label={{ value: '50%', fill: '#9ca3af', fontSize: 9, position: 'insideTopLeft' }} />
-            {/* 상관계수 0 기준선 */}
+            {/* ?곴?怨꾩닔 0 湲곗???*/}
             <ReferenceLine yAxisId="corr" y={0} stroke="#f43f5e" strokeDasharray="3 3"
               label={{ value: 'r=0', fill: '#f87171', fontSize: 9, position: 'insideTopRight' }} />
 
-            {/* 방향 일치율 선 */}
+            {/* 諛⑺뼢 ?쇱튂????*/}
             <Line
               yAxisId="agree"
               type="monotone"
               dataKey="directionalAgreement"
-              name={`방향 일치율 (${window}일)`}
+              name={`諛⑺뼢 ?쇱튂??(${window}??`}
               stroke="#3b82f6"
               strokeWidth={2}
               dot={false}
               connectNulls={false}
             />
-            {/* 롤링 피어슨 상관계수 선 */}
+            {/* 濡ㅻ쭅 ?쇱뼱???곴?怨꾩닔 ??*/}
             <Line
               yAxisId="corr"
               type="monotone"
               dataKey="rollingCorrelation"
-              name={`롤링 상관계수 (${window}일)`}
+              name={`濡ㅻ쭅 ?곴?怨꾩닔 (${window}??`}
               stroke="#f59e0b"
               strokeWidth={2}
               dot={false}

@@ -1,4 +1,5 @@
 import type { DailyTradeData } from '../data/mockData';
+export type CandleResolution = 'day' | 'week' | 'month';
 
 // Extended entity key that supports composite 'combined' option
 export type EntityKey = 'financialInvestment' | 'foreign' | 'combined' | 'individual';
@@ -46,6 +47,34 @@ export interface RiskAssessment {
   level: 'normal' | 'caution' | 'warning' | 'danger';
   label: string;
   factors: string[];
+}
+
+export interface MovingAveragePoint {
+  date: string;
+  value: number;
+  ma5: number | null;
+  ma20: number | null;
+  cumulative: number;
+  foreign: number;
+  financialInvestment: number;
+  isSell: boolean;
+  kospiClose: number | null;
+}
+
+function getWeekStart(dateStr: string): string {
+  const d = new Date(`${dateStr}T00:00:00`);
+  const day = (d.getDay() + 6) % 7; // Monday=0
+  d.setDate(d.getDate() - day);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const dayStr = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${dayStr}`;
+}
+
+function getPeriodKey(dateStr: string, resolution: CandleResolution): string {
+  if (resolution === 'month') return dateStr.slice(0, 7);
+  if (resolution === 'week') return getWeekStart(dateStr);
+  return dateStr;
 }
 
 // Filter data by date range
@@ -285,17 +314,7 @@ export function calculateRiskScore(
 export function calculateMovingAverages(
   data: DailyTradeData[],
   entityKey: EntityKey = 'financialInvestment'
-): {
-  date: string;
-  value: number;
-  ma5: number | null;
-  ma20: number | null;
-  cumulative: number;
-  foreign: number;
-  financialInvestment: number;
-  isSell: boolean;
-  kospiClose: number | null;
-}[] {
+): MovingAveragePoint[] {
   const sorted = [...data].sort(
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
@@ -330,6 +349,91 @@ export function calculateMovingAverages(
       kospiClose: typeof d.kospiClose === 'number' ? d.kospiClose : null,
     };
   });
+}
+
+export function aggregateMovingAverageSeries(
+  data: MovingAveragePoint[],
+  resolution: CandleResolution
+): MovingAveragePoint[] {
+  const sorted = [...data].sort((a, b) => a.date.localeCompare(b.date));
+  if (resolution === 'day') return sorted;
+
+  const grouped = new Map<string, MovingAveragePoint>();
+  for (const row of sorted) {
+    const key = getPeriodKey(row.date, resolution);
+    const prev = grouped.get(key);
+    if (!prev) {
+      grouped.set(key, {
+        ...row,
+        ma5: null,
+        ma20: null,
+      });
+      continue;
+    }
+
+    prev.date = row.date; // use last trading day in period
+    prev.value += row.value;
+    prev.foreign += row.foreign;
+    prev.financialInvestment += row.financialInvestment;
+    prev.kospiClose = row.kospiClose ?? prev.kospiClose;
+  }
+
+  const rows = [...grouped.values()].sort((a, b) => a.date.localeCompare(b.date));
+  let cumulative = 0;
+  for (let i = 0; i < rows.length; i++) {
+    cumulative += rows[i].value;
+    rows[i].cumulative = cumulative;
+    rows[i].isSell = rows[i].value < 0;
+
+    if (i >= 4) {
+      const slice5 = rows.slice(i - 4, i + 1);
+      rows[i].ma5 = slice5.reduce((sum, x) => sum + x.value, 0) / 5;
+    } else {
+      rows[i].ma5 = null;
+    }
+
+    if (i >= 19) {
+      const slice20 = rows.slice(i - 19, i + 1);
+      rows[i].ma20 = slice20.reduce((sum, x) => sum + x.value, 0) / 20;
+    } else {
+      rows[i].ma20 = null;
+    }
+  }
+
+  return rows;
+}
+
+export function aggregateTradeData(
+  data: DailyTradeData[],
+  resolution: CandleResolution
+): DailyTradeData[] {
+  const sorted = [...data].sort((a, b) => a.date.localeCompare(b.date));
+  if (resolution === 'day') return sorted;
+
+  const grouped = new Map<string, DailyTradeData>();
+  for (const row of sorted) {
+    const key = getPeriodKey(row.date, resolution);
+    const prev = grouped.get(key);
+    if (!prev) {
+      grouped.set(key, { ...row, kospiClose: row.kospiClose ?? null });
+      continue;
+    }
+
+    prev.date = row.date;
+    prev.individual += row.individual;
+    prev.foreign += row.foreign;
+    prev.institution += row.institution;
+    prev.financialInvestment += row.financialInvestment;
+    prev.insurance += row.insurance;
+    prev.investmentTrust += row.investmentTrust;
+    prev.bank += row.bank;
+    prev.otherFinancial += row.otherFinancial;
+    prev.pension += row.pension;
+    prev.otherCorporation += row.otherCorporation;
+    prev.kospiClose = row.kospiClose ?? prev.kospiClose;
+  }
+
+  return [...grouped.values()].sort((a, b) => a.date.localeCompare(b.date));
 }
 
 
@@ -417,4 +521,3 @@ export function calculateCorrelationSeries(
     };
   });
 }
-

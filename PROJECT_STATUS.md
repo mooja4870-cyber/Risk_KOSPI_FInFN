@@ -33,3 +33,9 @@
 - KOSPI 전체 백필 조건 개선: earliest_kospi_existing가 과도하게 최근이면 1회 deep backfill 수행하도록 update_latest_data.py 수정
 - 백필 재실행 결과: KOSPI first_non_null=1997-06-04, 2025-01-01~2025-11-04 구간 null 0건
 
+
+- 일봉/주봉/월봉 전환 추가: DailyBarChart, CorrelationChart에 해상도 토글 UI 및 집계 로직 연동
+- analysis.ts에 주/월 집계 유틸(aggregateMovingAverageSeries, aggregateTradeData) 추가
+
+- analysis.ts에 주/월 집계 유틸(aggregateMovingAverageSeries, aggregateTradeData) 추가
+- 일봉/주봉/월봉 전환 추가: DailyBarChart, CorrelationChart에 해상도 토글 UI 및 집계 로직 연동
