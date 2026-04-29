@@ -28,3 +28,8 @@
 
 - streamlit_app.py fallback stale 판정을 파일 mtime에서 JSON meta.updatedAtKst 기준으로 개선(배포 직후에도 실제 데이터 노후 감지)
 - App.tsx 전반의 한글 모지바케(깨진 문자열) 복구 및 UI 문구 정상화
+- KOSPI 전체 백필 조건 개선: earliest_kospi_existing가 과도하게 최근이면 1회 deep backfill 수행하도록 update_latest_data.py 수정
+
+- KOSPI 전체 백필 조건 개선: earliest_kospi_existing가 과도하게 최근이면 1회 deep backfill 수행하도록 update_latest_data.py 수정
+- 백필 재실행 결과: KOSPI first_non_null=1997-06-04, 2025-01-01~2025-11-04 구간 null 0건
+

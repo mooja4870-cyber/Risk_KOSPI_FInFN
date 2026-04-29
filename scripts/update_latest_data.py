@@ -255,9 +255,18 @@ def main() -> None:
     # Do not force a full KOSPI backfill just because the first legacy rows predate
     # Naver's available index close history. That made every scheduled refresh crawl
     # hundreds of old pages and prevented recent chart data from being updated.
+    target_dt = datetime.strptime(HISTORICAL_START_DATE, "%Y-%m-%d").date()
+    kospi_backfill_incomplete = False
+    if earliest_kospi_existing:
+        earliest_kospi_dt = datetime.strptime(earliest_kospi_existing, "%Y-%m-%d").date()
+        # If the first known KOSPI close starts far later than our historical window,
+        # run a one-time deep backfill to fill the missing early section.
+        kospi_backfill_incomplete = (earliest_kospi_dt - target_dt).days > 7
+
     needs_kospi_backfill = (
         needs_backfill
         or earliest_kospi_existing is None
+        or kospi_backfill_incomplete
     )
     max_pages_kospi = BOOTSTRAP_MAX_PAGES if needs_kospi_backfill else RECENT_REFRESH_PAGES
 
