@@ -1,5 +1,8 @@
 import json
+import subprocess
+import sys
 from pathlib import Path
+from datetime import datetime, timedelta
 
 import streamlit as st
 import streamlit.components.v1 as components
@@ -24,6 +27,33 @@ project_root = Path(__file__).parent
 static_html = project_root / "streamlit_static" / "index.html"
 dist_html = project_root / "dist" / "index.html"
 latest_json = project_root / "public" / "latest-trading-data.json"
+update_script = project_root / "scripts" / "update_latest_data.py"
+stale_after = timedelta(hours=6)
+
+def is_stale(path: Path, threshold: timedelta) -> bool:
+    if not path.exists():
+        return True
+    modified = datetime.fromtimestamp(path.stat().st_mtime)
+    return datetime.now() - modified > threshold
+
+def refresh_data_if_needed() -> None:
+    if not is_stale(latest_json, stale_after):
+        return
+    if not update_script.exists():
+        return
+    try:
+        subprocess.run(
+            [sys.executable, str(update_script)],
+            cwd=str(project_root),
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=180,
+        )
+    except Exception as exc:
+        st.warning(f"자동 데이터 갱신 실패: {exc}")
+
+refresh_data_if_needed()
 
 if not static_html.exists() and dist_html.exists():
     static_html.parent.mkdir(parents=True, exist_ok=True)
