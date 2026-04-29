@@ -26,3 +26,4 @@
 - 데이터 수집 재실행으로 public/latest-trading-data.json 최신일을 2026-04-29로 갱신
 - Streamlit 반영을 위해 원격 푸시 진행
 
+- streamlit_app.py fallback stale 판정을 파일 mtime에서 JSON meta.updatedAtKst 기준으로 개선(배포 직후에도 실제 데이터 노후 감지)

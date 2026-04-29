@@ -33,6 +33,19 @@ stale_after = timedelta(hours=6)
 def is_stale(path: Path, threshold: timedelta) -> bool:
     if not path.exists():
         return True
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        updated_at = (
+            payload.get("meta", {}).get("updatedAtKst")
+            if isinstance(payload, dict)
+            else None
+        )
+        if isinstance(updated_at, str) and updated_at:
+            updated_dt = datetime.strptime(updated_at, "%Y-%m-%d %H:%M:%S")
+            return datetime.now() - updated_dt > threshold
+    except Exception:
+        pass
+
     modified = datetime.fromtimestamp(path.stat().st_mtime)
     return datetime.now() - modified > threshold
 
