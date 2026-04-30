@@ -1,5 +1,6 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 import json
+import os
 import re
 from datetime import datetime
 from pathlib import Path
@@ -20,9 +21,17 @@ HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
 }
 
-# 네트워크 설정
-REQUEST_TIMEOUT = 30  # 타임아웃을 30초로 증가
-MAX_RETRIES = 3  # 재시도 횟수
+# ?ㅽ듃?뚰겕 ?ㅼ젙
+DEFAULT_REQUEST_TIMEOUT = 30
+DEFAULT_MAX_RETRIES = 3
+STARTUP_REQUEST_TIMEOUT = 8
+STARTUP_MAX_RETRIES = 1
+STARTUP_RECENT_PAGES = 3
+
+UPDATE_MODE = os.getenv("UPDATE_LATEST_MODE", "").strip().lower()
+IS_STARTUP_MODE = UPDATE_MODE == "startup"
+REQUEST_TIMEOUT = STARTUP_REQUEST_TIMEOUT if IS_STARTUP_MODE else DEFAULT_REQUEST_TIMEOUT
+MAX_RETRIES = STARTUP_MAX_RETRIES if IS_STARTUP_MODE else DEFAULT_MAX_RETRIES
 
 
 def parse_number(value: Optional[str]) -> int:
@@ -108,7 +117,7 @@ def fetch_detail_trend_map(max_pages: int, min_date: str) -> Dict[str, Dict[str,
     for page in range(1, max_pages + 1):
         params = {"bizdate": "215600", "sosok": "", "page": page}
         
-        # 재시도 로직
+        # ?ъ떆??濡쒖쭅
         for attempt in range(MAX_RETRIES):
             try:
                 response = requests.get(DETAIL_TREND_URL, headers=HEADERS, params=params, timeout=REQUEST_TIMEOUT)
@@ -116,10 +125,10 @@ def fetch_detail_trend_map(max_pages: int, min_date: str) -> Dict[str, Dict[str,
                 break
             except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
                 if attempt < MAX_RETRIES - 1:
-                    print(f"  [WARN] 재시도 {attempt + 1}/{MAX_RETRIES} (페이지 {page})")
+                    print(f"  [WARN] ?ъ떆??{attempt + 1}/{MAX_RETRIES} (?섏씠吏 {page})")
                     continue
                 else:
-                    print(f"  [ERROR] 최대 재시도 횟수 초과 (페이지 {page}): {e}")
+                    print(f"  [ERROR] 理쒕? ?ъ떆???잛닔 珥덇낵 (?섏씠吏 {page}): {e}")
                     return detail_map
 
         rows = parse_detail_rows(response.text)
@@ -163,7 +172,7 @@ def fetch_kospi_close_map(max_pages: int, min_date: str) -> Dict[str, float]:
     for page in range(1, max_pages + 1):
         params = {"code": "KOSPI", "page": page}
         
-        # 재시도 로직
+        # ?ъ떆??濡쒖쭅
         for attempt in range(MAX_RETRIES):
             try:
                 response = requests.get(KOSPI_INDEX_URL, headers=HEADERS, params=params, timeout=REQUEST_TIMEOUT)
@@ -171,10 +180,10 @@ def fetch_kospi_close_map(max_pages: int, min_date: str) -> Dict[str, float]:
                 break
             except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
                 if attempt < MAX_RETRIES - 1:
-                    print(f"  [WARN] 재시도 {attempt + 1}/{MAX_RETRIES} (KOSPI 페이지 {page})")
+                    print(f"  [WARN] ?ъ떆??{attempt + 1}/{MAX_RETRIES} (KOSPI ?섏씠吏 {page})")
                     continue
                 else:
-                    print(f"  [ERROR] KOSPI 최대 재시도 횟수 초과 (페이지 {page}): {e}")
+                    print(f"  [ERROR] KOSPI 理쒕? ?ъ떆???잛닔 珥덇낵 (?섏씠吏 {page}): {e}")
                     return close_map
 
         rows = parse_kospi_rows(response.text)
@@ -270,6 +279,11 @@ def main() -> None:
     )
     max_pages_kospi = BOOTSTRAP_MAX_PAGES if needs_kospi_backfill else RECENT_REFRESH_PAGES
 
+    # Streamlit startup path must stay responsive.
+    if IS_STARTUP_MODE:
+        max_pages = STARTUP_RECENT_PAGES
+        max_pages_kospi = STARTUP_RECENT_PAGES
+
     fetched_map = fetch_detail_trend_map(max_pages=max_pages, min_date=HISTORICAL_START_DATE)
     kospi_map = fetch_kospi_close_map(max_pages=max_pages_kospi, min_date=HISTORICAL_START_DATE)
     all_dates = sorted(set(existing_map.keys()) | set(fetched_map.keys()) | set(kospi_map.keys()))
@@ -339,3 +353,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
