@@ -39,3 +39,9 @@
 
 - analysis.ts에 주/월 집계 유틸(aggregateMovingAverageSeries, aggregateTradeData) 추가
 - 일봉/주봉/월봉 전환 추가: DailyBarChart, CorrelationChart에 해상도 토글 UI 및 집계 로직 연동
+
+## 2026-05-01 데이터 최신화
+- 사용자 보고: 4/29까지만 표시됨 → streamlit_static/latest-trading-data.json이 4/29 stale 상태 확인
+- scripts/update_latest_data.py 재실행 → public/latest-trading-data.json: 1997-04-14 ~ 2026-04-30 (7242 rows)
+- public → dist, streamlit_static 동기 복사 (3개 파일 updatedAtKst=2026-05-01 05:55:35, last=2026-04-30)
+- 참고: 2026-05-01은 근로자의 날(한국 증시 휴장)이므로 4/30이 최신 거래일
