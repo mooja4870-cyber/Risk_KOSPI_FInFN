@@ -26,8 +26,8 @@ static_html = project_root / "streamlit_static" / "index.html"
 dist_html = project_root / "dist" / "index.html"
 latest_json = project_root / "public" / "latest-trading-data.json"
 
-# Keep startup path minimal for Streamlit Cloud health checks.
-inject_backend_data = os.getenv("INJECT_BACKEND_DATA", "false").lower() in {"1", "true", "yes"}
+# Provide backend data directly so the embedded app does not fall back to mock data.
+inject_backend_data = os.getenv("INJECT_BACKEND_DATA", "true").lower() in {"1", "true", "yes"}
 
 if static_html.exists():
     html_file = static_html

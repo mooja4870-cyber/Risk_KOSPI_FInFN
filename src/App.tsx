@@ -79,6 +79,27 @@ function minDate(a: string, b: string): string {
   return a <= b ? a : b;
 }
 
+function trimLeadingZeroRows(data: DailyTradeData[]): DailyTradeData[] {
+  const keys: (keyof DailyTradeData)[] = [
+    'individual',
+    'foreign',
+    'institution',
+    'financialInvestment',
+    'insurance',
+    'investmentTrust',
+    'bank',
+    'otherFinancial',
+    'pension',
+    'otherCorporation',
+  ];
+
+  const firstIdx = data.findIndex((row) =>
+    keys.some((k) => Number(row[k] ?? 0) !== 0)
+  );
+  if (firstIdx <= 0) return data;
+  return data.slice(firstIdx);
+}
+
 export default function App() {
   const [tradingData, setTradingData] = useState<DailyTradeData[]>(mockData);
   const [dataSource, setDataSource] = useState('데모 데이터');
@@ -117,7 +138,9 @@ export default function App() {
     function applyPayload(payload: LatestTradingDataPayload) {
       if (!Array.isArray(payload.data) || payload.data.length === 0 || cancelled) return;
 
-      const normalized = [...payload.data].sort((a, b) => a.date.localeCompare(b.date));
+      const normalized = trimLeadingZeroRows(
+        [...payload.data].sort((a, b) => a.date.localeCompare(b.date))
+      );
       const first = normalized[0].date;
 
       const today = getKstDateString(new Date());
