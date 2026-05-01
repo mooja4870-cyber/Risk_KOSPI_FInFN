@@ -14,6 +14,7 @@ import streamlit.components.v1 as components
 # ---------------------------------------------------------------------------
 st.set_page_config(page_title="Risk_KOSPI", layout="wide")
 
+
 st.markdown(
     """
     <style>

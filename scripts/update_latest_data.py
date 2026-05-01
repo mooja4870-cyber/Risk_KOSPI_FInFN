@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 import json
 import os
 import re
@@ -309,15 +309,6 @@ def main() -> None:
         raise RuntimeError("No investor detail data returned")
 
     rows = [merged_map[date] for date in sorted(merged_map.keys())]
-    earliest_kospi_date = min(kospi_map.keys()) if kospi_map else None
-    for row in rows:
-        date = row["date"]
-        existing_close = row.get("kospiClose")
-        if earliest_kospi_date and date < earliest_kospi_date and date not in kospi_map:
-            row["kospiClose"] = None
-        else:
-            row["kospiClose"] = kospi_map.get(date, existing_close)
-
     # Fill occasional missing values by nearest known close to keep the line continuous.
     last_known: Optional[float] = None
     for row in rows:
