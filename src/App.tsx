@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { mockData, type DailyTradeData } from './data/mockData';
 import {
   filterByDateRange,
@@ -29,6 +29,7 @@ import {
   Database,
   Zap,
   Globe2,
+  RefreshCw,
 } from 'lucide-react';
 
 type TabId = 'overview' | 'charts' | 'streaks' | 'data' | 'benchmark';
@@ -100,6 +101,8 @@ function trimLeadingZeroRows(data: DailyTradeData[]): DailyTradeData[] {
   return data.slice(firstIdx);
 }
 
+const REFRESH_INTERVAL_MS = 5 * 60 * 1000; // 5분
+
 export default function App() {
   const [tradingData, setTradingData] = useState<DailyTradeData[]>(mockData);
   const [dataSource, setDataSource] = useState('데모 데이터');
@@ -113,6 +116,13 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<TabId>('overview');
   const [isAnalyzed, setIsAnalyzed] = useState(true);
   const [selectedEntity, setSelectedEntity] = useState<EntityKey>('financialInvestment');
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastRefreshedAt, setLastRefreshedAt] = useState<string | null>(null);
+  const [nextRefreshSec, setNextRefreshSec] = useState(Math.floor(REFRESH_INTERVAL_MS / 1000));
+  const refreshTimerRef = useRef<number | null>(null);
+  const countdownRef = useRef<number | null>(null);
+  // Track whether the user manually chose an endDate that differs from latest data
+  const userOverrodeEndDate = useRef(false);
 
   const entities: { id: EntityKey; label: string; desc: string }[] = [
     { id: 'financialInvestment', label: '금융투자', desc: '기관 중심 금융투자 수급' },
@@ -125,73 +135,112 @@ export default function App() {
 
   const earliestDataDate = tradingData[0]?.date ?? startDate;
   const latestDataDate = tradingData[tradingData.length - 1]?.date ?? endDate;
-  const todayKst = useMemo(() => getKstDateString(new Date()), []);
-  const yesterdayKst = useMemo(() => {
+
+  // todayKst / yesterdayKst: 주기적으로 갱신하여 날짜 변경 대응
+  const [todayKst, setTodayKst] = useState(() => getKstDateString(new Date()));
+  const [yesterdayKst, setYesterdayKst] = useState(() => {
     const d = new Date();
     d.setDate(d.getDate() - 1);
     return getKstDateString(d);
+  });
+
+  // 매 분마다 todayKst 갱신 (자정 넘김 대응)
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      const now = new Date();
+      setTodayKst(getKstDateString(now));
+      const yd = new Date(now);
+      yd.setDate(yd.getDate() - 1);
+      setYesterdayKst(getKstDateString(yd));
+    }, 60_000);
+    return () => window.clearInterval(id);
   }, []);
 
-  useEffect(() => {
-    let cancelled = false;
+  const resetCountdown = useCallback(() => {
+    setNextRefreshSec(Math.floor(REFRESH_INTERVAL_MS / 1000));
+    if (countdownRef.current) window.clearInterval(countdownRef.current);
+    countdownRef.current = window.setInterval(() => {
+      setNextRefreshSec((prev) => (prev <= 1 ? Math.floor(REFRESH_INTERVAL_MS / 1000) : prev - 1));
+    }, 1000);
+  }, []);
 
-    function applyPayload(payload: LatestTradingDataPayload) {
-      if (!Array.isArray(payload.data) || payload.data.length === 0 || cancelled) return;
+  const applyPayload = useCallback((payload: LatestTradingDataPayload) => {
+    if (!Array.isArray(payload.data) || payload.data.length === 0) return;
 
-      const normalized = trimLeadingZeroRows(
-        [...payload.data].sort((a, b) => a.date.localeCompare(b.date))
-      );
-      const first = normalized[0].date;
+    const normalized = trimLeadingZeroRows(
+      [...payload.data].sort((a, b) => a.date.localeCompare(b.date))
+    );
+    const first = normalized[0].date;
 
-      const today = getKstDateString(new Date());
-      const latest = normalized[normalized.length - 1]?.date ?? today;
-      const defaultEndDate = minDate(today, latest);
-      setTradingData(normalized);
-      setDataSource(payload.meta?.source ?? '네이버 API 업데이트 데이터');
-      setDataUpdatedAt(payload.meta?.updatedAtKst ?? null);
-      setStartDate((prev) => {
-        const fallback = clampToMinDate(shiftMonths(defaultEndDate, 3), first);
-        if (!prev) return fallback;
-        if (prev < first) return first;
-        return prev > defaultEndDate ? fallback : prev;
-      });
-      setEndDate((prev) => {
-        if (!prev) return defaultEndDate;
-        return prev > latest ? defaultEndDate : prev;
-      });
-      setIsAnalyzed(true);
-    }
+    const today = getKstDateString(new Date());
+    const latest = normalized[normalized.length - 1]?.date ?? today;
+    const defaultEndDate = minDate(today, latest);
+    setTradingData(normalized);
+    setDataSource(payload.meta?.source ?? '네이버 API 업데이트 데이터');
+    setDataUpdatedAt(payload.meta?.updatedAtKst ?? null);
+    setStartDate((prev) => {
+      const fallback = clampToMinDate(shiftMonths(defaultEndDate, 3), first);
+      if (!prev) return fallback;
+      if (prev < first) return first;
+      return prev > defaultEndDate ? fallback : prev;
+    });
+    // endDate를 자동으로 최신 데이터 날짜까지 확장 (사용자가 수동 지정하지 않은 경우)
+    setEndDate((prev) => {
+      if (!prev) return defaultEndDate;
+      // 사용자가 수동으로 endDate를 변경한 경우 유지
+      if (userOverrodeEndDate.current) return prev;
+      // 새 데이터가 더 최신이면 자동으로 endDate 확장
+      return defaultEndDate;
+    });
+    setIsAnalyzed(true);
+  }, []);
 
-    async function loadLatestData() {
-      try {
-        if (window.BACKEND_DATA) {
-          applyPayload(window.BACKEND_DATA);
-          return;
-        }
-
-        const latestDataPath = `${import.meta.env.BASE_URL}latest-trading-data.json`;
-        const response = await fetch(`${latestDataPath}?_ts=${Date.now()}`, {
-          cache: 'no-store',
-        });
-        if (!response.ok) return;
-
-        const payload = (await response.json()) as LatestTradingDataPayload;
-        applyPayload(payload);
-      } catch (error) {
-        console.error('Failed to load latest data file:', error);
+  const loadLatestData = useCallback(async () => {
+    setIsRefreshing(true);
+    try {
+      if (window.BACKEND_DATA) {
+        applyPayload(window.BACKEND_DATA);
+        return;
       }
-    }
 
+      const latestDataPath = `${import.meta.env.BASE_URL}latest-trading-data.json`;
+      const response = await fetch(`${latestDataPath}?_ts=${Date.now()}`, {
+        cache: 'no-store',
+      });
+      if (!response.ok) return;
+
+      const payload = (await response.json()) as LatestTradingDataPayload;
+      applyPayload(payload);
+    } catch (error) {
+      console.error('Failed to load latest data file:', error);
+    } finally {
+      setIsRefreshing(false);
+      setLastRefreshedAt(new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }));
+    }
+  }, [applyPayload]);
+
+  // 수동 새로고침 핸들러
+  const handleManualRefresh = useCallback(() => {
+    userOverrodeEndDate.current = false; // 수동 새로고침 시 endDate 자동 추적 재개
     void loadLatestData();
-    const intervalId = window.setInterval(() => {
+    resetCountdown();
+  }, [loadLatestData, resetCountdown]);
+
+  // 초기 로드 + 주기적 리프레시
+  useEffect(() => {
+    void loadLatestData();
+    resetCountdown();
+
+    refreshTimerRef.current = window.setInterval(() => {
       void loadLatestData();
-    }, 5 * 60 * 1000);
+      resetCountdown();
+    }, REFRESH_INTERVAL_MS);
 
     return () => {
-      cancelled = true;
-      window.clearInterval(intervalId);
+      if (refreshTimerRef.current) window.clearInterval(refreshTimerRef.current);
+      if (countdownRef.current) window.clearInterval(countdownRef.current);
     };
-  }, []);
+  }, [loadLatestData, resetCountdown]);
 
   const isDataLagging = latestDataDate < todayKst;
 
@@ -345,6 +394,7 @@ export default function App() {
                 onChange={(e) => {
                   setStartDate(e.target.value);
                   setIsAnalyzed(false);
+                  userOverrodeEndDate.current = false;
                 }}
                 className="w-full bg-gray-900 border border-gray-600 rounded-lg px-2 py-1.5 text-xs text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
@@ -362,6 +412,7 @@ export default function App() {
                 onChange={(e) => {
                   setEndDate(e.target.value);
                   setIsAnalyzed(false);
+                  userOverrodeEndDate.current = true;
                 }}
                 className="w-full bg-gray-900 border border-gray-600 rounded-lg px-2 py-1.5 text-xs text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
@@ -383,6 +434,7 @@ export default function App() {
                     setStartDate(preset.start);
                     setEndDate(preset.end);
                     setIsAnalyzed(true);
+                    userOverrodeEndDate.current = false;
                   }}
                   className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all border ${startDate === preset.start && endDate === preset.end
                     ? 'bg-blue-500/20 border-blue-500/40 text-blue-400'
@@ -407,7 +459,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* Data info */}
+          {/* Data info + refresh controls */}
           {isAnalyzed && (
             <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] text-gray-500">
               <span className="flex items-center gap-1">기간 {analyzedStartDate} ~ {analyzedEndDate}</span>
@@ -429,6 +481,25 @@ export default function App() {
                   최신 데이터 기준일: {latestDataDate} (오늘: {todayKst})
                 </span>
               )}
+
+              {/* Auto-refresh indicator */}
+              <span className="flex items-center gap-1 ml-auto">
+                <button
+                  onClick={handleManualRefresh}
+                  disabled={isRefreshing}
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border border-gray-600/50 text-gray-400 hover:text-blue-400 hover:border-blue-500/40 transition-all disabled:opacity-50"
+                  title="수동 새로고침"
+                >
+                  <RefreshCw className={`w-3 h-3 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  {isRefreshing ? '갱신 중…' : '새로고침'}
+                </button>
+                {lastRefreshedAt && (
+                  <span className="text-gray-600">최종 {lastRefreshedAt}</span>
+                )}
+                <span className="text-gray-600">
+                  다음 {Math.floor(nextRefreshSec / 60)}:{String(nextRefreshSec % 60).padStart(2, '0')}
+                </span>
+              </span>
             </div>
           )}
         </div>
