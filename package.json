@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:streamlit": "vite build && cp dist/index.html streamlit_static/index.html",
+    "build:streamlit": "vite build && node -e \"require('fs').copyFileSync('dist/index.html','streamlit_static/index.html')\"",
     "preview": "vite preview",
     "update:data": "python3.11 scripts/update_latest_data.py",
     "start": "npx pm2 start ecosystem.config.cjs",
