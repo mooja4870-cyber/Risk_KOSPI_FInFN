@@ -1,9 +1,9 @@
 {
   "meta": {
     "source": "Naver Finance investor detail + KOSPI close (historical + 24-hour refresh)",
-    "updatedAtKst": "2026-05-01 22:42:29",
+    "updatedAtKst": "2026-05-08 11:01:57",
     "earliestTradingDate": "1997-04-14",
-    "latestTradingDate": "2026-04-30",
+    "latestTradingDate": "2026-05-08",
     "refreshIntervalHours": 24,
     "historicalStartDate": "1997-01-01"
   },
@@ -101395,6 +101395,62 @@
       "pension": 350,
       "otherCorporation": -103,
       "kospiClose": 6598.87
+    },
+    {
+      "date": "2026-05-04",
+      "individual": -47936,
+      "foreign": 29308,
+      "institution": 20098,
+      "financialInvestment": 19159,
+      "insurance": -1221,
+      "investmentTrust": 2657,
+      "bank": -79,
+      "otherFinancial": 89,
+      "pension": -507,
+      "otherCorporation": -1470,
+      "kospiClose": 6936.99
+    },
+    {
+      "date": "2026-05-06",
+      "individual": -5715,
+      "foreign": 31085,
+      "institution": -22894,
+      "financialInvestment": -8284,
+      "insurance": -5084,
+      "investmentTrust": -7843,
+      "bank": -118,
+      "otherFinancial": 24,
+      "pension": -1590,
+      "otherCorporation": -2476,
+      "kospiClose": 7384.56
+    },
+    {
+      "date": "2026-05-07",
+      "individual": 59925,
+      "foreign": -66987,
+      "institution": 8917,
+      "financialInvestment": 17617,
+      "insurance": -806,
+      "investmentTrust": -8154,
+      "bank": -246,
+      "otherFinancial": 11,
+      "pension": 494,
+      "otherCorporation": -1855,
+      "kospiClose": 7490.05
+    },
+    {
+      "date": "2026-05-08",
+      "individual": 26802,
+      "foreign": -31515,
+      "institution": 3985,
+      "financialInvestment": 3620,
+      "insurance": 16,
+      "investmentTrust": -708,
+      "bank": 34,
+      "otherFinancial": 30,
+      "pension": 993,
+      "otherCorporation": 729,
+      "kospiClose": 7398.52
     }
   ]
 }

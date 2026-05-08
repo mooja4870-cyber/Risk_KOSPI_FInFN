@@ -31,6 +31,7 @@ import {
   Globe2,
   RefreshCw,
 } from 'lucide-react';
+import ThemeToggle from './components/ThemeToggle';
 
 type TabId = 'overview' | 'charts' | 'streaks' | 'data' | 'benchmark';
 
@@ -321,9 +322,9 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen text-white relative z-0">
+    <div className="min-h-screen text-[var(--text)] relative z-0 transition-colors duration-300">
       {/* Dual wave background decoration */}
-      <div className="fixed inset-0 pointer-events-none -z-10 bg-gray-950 overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none -z-10 bg-[var(--bg)] overflow-hidden">
         {/* Subtle radial gradients */}
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-500/5 rounded-full blur-[120px]" />
         <div className="absolute top-[20%] right-[-10%] w-[40%] h-[60%] bg-purple-500/5 rounded-full blur-[100px]" />
@@ -359,26 +360,29 @@ export default function App() {
               </div>
             </div>
 
-            {/* Entity Selector Toggle */}
-            <div className="flex bg-gray-900/80 p-1 rounded-xl border border-gray-700/50 self-start sm:self-center">
-              {entities.map((e) => (
-                <button
-                  key={e.id}
-                  onClick={() => setSelectedEntity(e.id)}
-                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${selectedEntity === e.id
-                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
-                    : 'text-gray-500 hover:text-gray-300'
-                    }`}
-                >
-                  {e.label}
-                </button>
-              ))}
+            {/* Entity Selector Toggle + Theme Toggle */}
+            <div className="flex items-center gap-3 self-start sm:self-center">
+              <ThemeToggle />
+              <div className="flex bg-[var(--panel)] p-1 rounded-xl border border-[var(--panel-border)] shadow-sm">
+                {entities.map((e) => (
+                  <button
+                    key={e.id}
+                    onClick={() => setSelectedEntity(e.id)}
+                    className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${selectedEntity === e.id
+                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
+                      : 'text-[var(--text-muted)] hover:text-[var(--text)]'
+                      }`}
+                  >
+                    {e.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </header>
 
         {/* Control Panel */}
-        <div className="mb-4 rounded-xl border border-gray-700/50 bg-gray-800/50 backdrop-blur-sm p-3 sm:p-4">
+        <div className="mb-4 rounded-xl border border-[var(--panel-border)] bg-[var(--panel)] backdrop-blur-sm p-3 sm:p-4 shadow-sm">
           <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-end gap-3 sm:gap-4">
             {/* Date inputs */}
             <div className="space-y-1">
@@ -396,7 +400,7 @@ export default function App() {
                   setIsAnalyzed(false);
                   userOverrodeEndDate.current = false;
                 }}
-                className="w-full bg-gray-900 border border-gray-600 rounded-lg px-2 py-1.5 text-xs text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full bg-[var(--bg-elev)] border border-[var(--panel-border)] rounded-lg px-2 py-1.5 text-xs text-[var(--text)] focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
               />
             </div>
             <div className="space-y-1">
@@ -414,7 +418,7 @@ export default function App() {
                   setIsAnalyzed(false);
                   userOverrodeEndDate.current = true;
                 }}
-                className="w-full bg-gray-900 border border-gray-600 rounded-lg px-2 py-1.5 text-xs text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full bg-[var(--bg-elev)] border border-[var(--panel-border)] rounded-lg px-2 py-1.5 text-xs text-[var(--text)] focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
               />
             </div>
             <button
@@ -438,7 +442,7 @@ export default function App() {
                   }}
                   className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-all border ${startDate === preset.start && endDate === preset.end
                     ? 'bg-blue-500/20 border-blue-500/40 text-blue-400'
-                    : 'bg-gray-900/50 border-gray-700/50 text-gray-400 hover:border-gray-500 hover:text-gray-300'
+                    : 'bg-[var(--bg-elev)] border-[var(--panel-border)] text-[var(--text-muted)] hover:border-[var(--text-dim)] hover:text-[var(--text)]'
                     }`}
                 >
                   {preset.label}
@@ -451,7 +455,7 @@ export default function App() {
                 href="https://finance.naver.com/sise/sise_trans_style.naver"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border border-emerald-500/40 text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 hover:text-emerald-200 transition-all"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border border-[var(--success)]/40 text-[var(--success)] bg-[var(--success)]/10 hover:bg-[var(--success)]/20 hover:text-[var(--success)] transition-all"
               >
                 <Globe2 className="w-3.5 h-3.5" />
                 네이버
@@ -461,42 +465,42 @@ export default function App() {
 
           {/* Data info + refresh controls */}
           {isAnalyzed && (
-            <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] text-gray-500">
+            <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] text-[var(--text-dim)] font-medium">
               <span className="flex items-center gap-1">기간 {analyzedStartDate} ~ {analyzedEndDate}</span>
               <span className="flex items-center gap-1">거래일수 {stats.tradingDays}일</span>
-              <span className="text-emerald-400/80 flex items-center gap-1">
+              <span className="text-[var(--success)]/80 flex items-center gap-1">
                 출처
                 <a
                   href="https://finance.naver.com/sise/sise_trans_style.naver"
                   target="_blank"
                   rel="noreferrer"
-                  className="text-emerald-400 hover:text-emerald-300 hover:underline"
+                  className="text-[var(--success)] hover:underline"
                 >
                   네이버
                 </a>
               </span>
               {dataUpdatedAt && <span>업데이트 {dataUpdatedAt.slice(5, 16)}</span>}
               {isDataLagging && (
-                <span className="text-amber-300">
+                <span className="text-[var(--warning)]">
                   최신 데이터 기준일: {latestDataDate} (오늘: {todayKst})
                 </span>
               )}
 
               {/* Auto-refresh indicator */}
-              <span className="flex items-center gap-1 ml-auto">
+              <span className="flex items-center gap-1 ml-auto text-[var(--text-dim)]">
                 <button
                   onClick={handleManualRefresh}
                   disabled={isRefreshing}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border border-gray-600/50 text-gray-400 hover:text-blue-400 hover:border-blue-500/40 transition-all disabled:opacity-50"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border border-[var(--panel-border)] text-[var(--text-muted)] hover:text-[var(--accent-primary)] hover:border-[var(--accent-primary)]/40 transition-all disabled:opacity-50"
                   title="수동 새로고침"
                 >
                   <RefreshCw className={`w-3 h-3 ${isRefreshing ? 'animate-spin' : ''}`} />
                   {isRefreshing ? '갱신 중…' : '새로고침'}
                 </button>
                 {lastRefreshedAt && (
-                  <span className="text-gray-600">최종 {lastRefreshedAt}</span>
+                  <span className="opacity-70">최종 {lastRefreshedAt}</span>
                 )}
-                <span className="text-gray-600">
+                <span className="opacity-70">
                   다음 {Math.floor(nextRefreshSec / 60)}:{String(nextRefreshSec % 60).padStart(2, '0')}
                 </span>
               </span>
@@ -506,36 +510,36 @@ export default function App() {
 
 
         {!isAnalyzed ? (
-          <div className="flex flex-col items-center justify-center py-32 text-center">
-            <Search className="w-16 h-16 text-gray-600 mb-4" />
-            <h2 className="text-xl font-bold text-gray-400 mb-2">
+          <div className="flex flex-col items-center justify-center py-32 text-center opacity-60">
+            <Search className="w-16 h-16 text-[var(--text-dim)] mb-4" />
+            <h2 className="text-xl font-bold text-[var(--text-muted)] mb-2">
               기간을 선택하고 분석하기를 클릭하세요.
             </h2>
-            <p className="text-gray-500 text-sm">
+            <p className="text-[var(--text-dim)] text-sm font-medium">
               날짜 범위를 조정하거나 프리셋 버튼을 사용해도 됩니다.
             </p>
           </div>
         ) : filteredData.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-32 text-center">
-            <Database className="w-16 h-16 text-gray-600 mb-4" />
-            <h2 className="text-xl font-bold text-gray-400 mb-2">
+          <div className="flex flex-col items-center justify-center py-32 text-center opacity-60">
+            <Database className="w-16 h-16 text-[var(--text-dim)] mb-4" />
+            <h2 className="text-xl font-bold text-[var(--text-muted)] mb-2">
               해당 기간에는 데이터가 없습니다
             </h2>
-            <p className="text-gray-500 text-sm">
+            <p className="text-[var(--text-dim)] text-sm font-medium">
               다른 기간을 선택해주세요 ({earliestDataDate} ~ {latestDataDate})
             </p>
           </div>
         ) : (
           <>
             {/* Tab Navigation */}
-            <div className="flex gap-1 mb-6 bg-gray-800/50 rounded-xl p-1 border border-gray-700/50 overflow-x-auto">
+            <div className="flex gap-1 mb-6 bg-[var(--panel)] rounded-xl p-1 border border-[var(--panel-border)] overflow-x-auto shadow-sm">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all whitespace-nowrap ${activeTab === tab.id
-                    ? 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 text-white border border-blue-500/30'
-                    : 'text-gray-400 hover:text-gray-300 hover:bg-gray-700/30'
+                    ? 'bg-gradient-to-r from-blue-500/10 to-purple-500/10 text-[var(--text)] border border-blue-500/20 shadow-sm'
+                    : 'text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--bg-elev)]'
                     }`}
                   style={{ fontSize: '102%', fontWeight: 700 }}
                 >
@@ -572,22 +576,22 @@ export default function App() {
                 <StatCards stats={stats} entityLabel={currentEntity.label} entityKey={selectedEntity} />
 
                 {/* Market Interpretation Guide */}
-                <div className="rounded-xl border border-gray-700/50 bg-gray-800/50 backdrop-blur-sm p-5">
-                  <h3 className="text-white font-bold mb-3 flex items-center gap-2">
+                <div className="rounded-xl border border-[var(--panel-border)] bg-[var(--panel)] backdrop-blur-sm p-5 shadow-sm">
+                  <h3 className="text-[var(--text)] font-bold mb-3 flex items-center gap-2">
                     <span className="text-lg">📌</span> 시장 해석 가이드
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-3">
-                      <h4 className="text-sm font-bold text-amber-400">주가 하락 위험 신호</h4>
-                      <div className="space-y-2 text-sm text-gray-400">
+                      <h4 className="text-sm font-bold text-[var(--warning)]">주가 하락 위험 신호</h4>
+                      <div className="space-y-2 text-sm text-[var(--text-muted)] font-medium">
                         <p>• {currentEntity.label} 5일 연속 순매도는 경고 신호입니다.</p>
                         <p>• 코스피 20일선 하향 이탈 시 방어적 대응을 권고합니다.</p>
                         <p>• 대규모 단일일 순매도 발생 시 급락을 주의하세요.</p>
                       </div>
                     </div>
                     <div className="space-y-3">
-                      <h4 className="text-sm font-bold text-emerald-400">반등 가능 신호</h4>
-                      <div className="space-y-2 text-sm text-gray-400">
+                      <h4 className="text-sm font-bold text-[var(--success)]">반등 가능 신호</h4>
+                      <div className="space-y-2 text-sm text-[var(--text-muted)] font-medium">
                         <p>• 7일 이상 순매도 이후 대규모 순매수 전환</p>
                         <p>• {currentEntity.label} 숏커버링 가능성이 높은 구간</p>
                         <p>• MA5가 MA20을 상향 돌파하면 추세 전환 신호</p>

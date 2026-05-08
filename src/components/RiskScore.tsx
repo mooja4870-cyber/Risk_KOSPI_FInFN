@@ -55,8 +55,8 @@ export default function RiskScore({ risk, compact = false, entityLabel = '금융
             <Icon className={`${compact ? 'w-5 h-5' : 'w-6 h-6'} text-white`} />
           </div>
           <div>
-            <h3 className={`text-white font-bold ${compact ? 'text-sm sm:text-base' : 'text-base sm:text-lg'}`}>{entityLabel} 리스크 점수</h3>
-            <p className="text-gray-400 text-[10px]">종료일 기준 연속 순매도 평가</p>
+            <h3 className={`text-[var(--text)] font-bold ${compact ? 'text-sm sm:text-base' : 'text-base sm:text-lg'}`}>{entityLabel} 리스크 점수</h3>
+            <p className="text-[var(--text-dim)] text-[10px]">종료일 기준 연속 순매도 평가</p>
           </div>
         </div>
         <div className="text-right">
@@ -69,7 +69,7 @@ export default function RiskScore({ risk, compact = false, entityLabel = '금융
 
       {/* Score bar */}
       <div className={compact ? 'mb-2' : 'mb-4'}>
-        <div className="flex justify-between text-xs text-gray-500 mb-1">
+        <div className="flex justify-between text-[10px] text-[var(--text-dim)] mb-1 font-medium">
           <span>0</span>
           <span>정상</span>
           <span>경계</span>
@@ -77,7 +77,7 @@ export default function RiskScore({ risk, compact = false, entityLabel = '금융
           <span>고위험</span>
           <span>10</span>
         </div>
-        <div className={`${compact ? 'h-2' : 'h-3'} bg-gray-800 rounded-full overflow-hidden`}>
+        <div className={`${compact ? 'h-2' : 'h-3'} bg-[var(--bg-elev)] rounded-full border border-[var(--panel-border)] overflow-hidden shadow-inner`}>
           <div
             className={`h-full rounded-full bg-gradient-to-r ${c.gradient} transition-all duration-1000 ease-out`}
             style={{ width: `${scorePercent}%` }}
@@ -87,14 +87,14 @@ export default function RiskScore({ risk, compact = false, entityLabel = '금융
 
       {/* Risk factors */}
       <div className={`${compact ? 'space-y-1' : 'space-y-1.5'} ${compact ? 'max-h-[90px] overflow-y-auto' : ''}`}>
-        <p className="text-xs text-gray-500 font-medium mb-1">리스크 요인 분석</p>
+        <p className="text-[10px] text-[var(--text-dim)] font-bold uppercase tracking-wider mb-1">리스크 요인 분석</p>
         {(compact ? risk.factors.slice(0, 2) : risk.factors).map((factor, i) => (
           <div
             key={i}
-            className={`flex items-start gap-2 ${compact ? 'text-xs' : 'text-sm'} text-gray-300`}
+            className={`flex items-start gap-2 ${compact ? 'text-xs' : 'text-sm'} text-[var(--text-muted)]`}
           >
-            <span className={`mt-0.5 w-1.5 h-1.5 rounded-full ${c.barColor} shrink-0`} />
-            <span>{factor}</span>
+            <span className={`mt-1.5 w-1.5 h-1.5 rounded-full ${c.barColor} shrink-0 shadow-sm`} />
+            <span className="leading-relaxed">{factor}</span>
           </div>
         ))}
       </div>

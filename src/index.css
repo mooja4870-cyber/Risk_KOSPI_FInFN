@@ -1,5 +1,59 @@
 @import "tailwindcss";
 
+:root {
+  --bg: #030712;
+  --bg-elev: #0b1222;
+  --panel: #111827;
+  --panel-border: rgba(55, 65, 81, 0.5);
+  --text: #f3f4f6;
+  --text-muted: #9ca3af;
+  --text-dim: #6b7280;
+  --accent-primary: #3b82f6;
+  --accent-secondary: #8b5cf6;
+  --accent-tertiary: #ec4899;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  
+  --chart-grid: #374151;
+  --chart-axis: #4b5563;
+  --chart-tick: #9ca3af;
+  --chart-tooltip-bg: rgba(17, 24, 39, 0.95);
+  --chart-tooltip-border: #374151;
+  
+  /* Shared transitions */
+  --theme-transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+:root[data-theme='light'] {
+  --bg: #f8fafc;
+  --bg-elev: #f1f5f9;
+  --panel: #ffffff;
+  --panel-border: rgba(203, 213, 225, 0.6);
+  --text: #0f172a;
+  --text-muted: #475569;
+  --text-dim: #64748b;
+  --accent-primary: #2563eb;
+  --accent-secondary: #7c3aed;
+  --accent-tertiary: #db2777;
+  --success: #059669;
+  --warning: #d97706;
+  --danger: #dc2626;
+
+  --chart-grid: #e2e8f0;
+  --chart-axis: #cbd5e1;
+  --chart-tick: #64748b;
+  --chart-tooltip-bg: rgba(255, 255, 255, 0.95);
+  --chart-tooltip-border: #e2e8f0;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  transition: var(--theme-transition);
+}
+
+
 /* 
  * Animated Flowing Wave Background 
  */

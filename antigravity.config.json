@@ -1,0 +1,11 @@
+{
+  "ai_settings": {
+    "default_model": "Qwen 3.6 (35B)",
+    "personas": {
+      "@2": "Qwen 3.6 (35B)"
+    },
+    "global_rules": [
+      "CRITICAL GLOBAL RULE: Every single response from the AI MUST start with the exact format '[YYYYMMDDHHMMSS] [Model Name]' at the very first line. Do not skip this rule under any circumstances. Example: [20260504022309] [Qwen 3.6 (35B)]"
+    ]
+  }
+}

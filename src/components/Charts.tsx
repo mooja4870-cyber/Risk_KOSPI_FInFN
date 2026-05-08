@@ -50,16 +50,18 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     const formattedDate = typeof label === 'string' ? formatDateKR(label) : label;
     return (
-      <div className="bg-gray-900/95 border border-gray-700 rounded-lg p-3 shadow-xl backdrop-blur-sm">
-        <p className="text-gray-400 text-xs mb-2 font-mono font-medium">{formattedDate}</p>
+      <div className="bg-[var(--chart-tooltip-bg)] border border-[var(--chart-tooltip-border)] rounded-lg p-3 shadow-xl backdrop-blur-sm">
+        <p className="text-[var(--text-dim)] text-xs mb-2 font-mono font-bold uppercase tracking-tight">{formattedDate}</p>
         {payload.map((p: any, i: number) => {
           const isKospi = p.dataKey === 'kospiClose' || p.name === 'KOSPI';
           return (
-            <p key={i} className="text-sm" style={{ color: p.color }}>
+            <p key={i} className="text-sm font-bold" style={{ color: p.color }}>
               {p.name}:{' '}
-              {isKospi
-                ? `${Number(p.value).toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} pt`
-                : `${formatNumber(Math.round(p.value))}억`}
+              <span className="font-mono">
+                {isKospi
+                  ? `${Number(p.value).toLocaleString('ko-KR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} pt`
+                  : `${formatNumber(Math.round(p.value))}억`}
+              </span>
             </p>
           );
         })}
@@ -80,10 +82,10 @@ export function DailyBarChart({ data, compact = false, entityLabel = '금융투�
   }));
 
   return (
-    <div className="rounded-xl border border-gray-700/50 bg-gray-800/50 backdrop-blur-sm p-5">
+    <div className="rounded-xl border border-[var(--panel-border)] bg-[var(--panel)] backdrop-blur-sm p-5 shadow-sm">
       <div className="flex items-start justify-between gap-3 mb-1">
-        <h3 className="text-white font-bold">{entityLabel} 순매수/순매도 및 KOSPI 추이</h3>
-        <div className="flex bg-gray-900/80 p-1 rounded-xl border border-gray-700/50">
+        <h3 className="text-[var(--text)] font-bold">{entityLabel} 순매수/순매도 및 KOSPI 추이</h3>
+        <div className="flex bg-[var(--bg-elev)] p-1 rounded-xl border border-[var(--panel-border)]">
           {[
             { value: 'day', label: '일봉' },
             { value: 'week', label: '주봉' },
@@ -95,7 +97,7 @@ export function DailyBarChart({ data, compact = false, entityLabel = '금융투�
               className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
                 resolution === opt.value
                   ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow'
-                  : 'text-gray-500 hover:text-gray-300'
+                  : 'text-[var(--text-muted)] hover:text-[var(--text)]'
               }`}
             >
               {opt.label}
@@ -103,22 +105,22 @@ export function DailyBarChart({ data, compact = false, entityLabel = '금융투�
           ))}
         </div>
       </div>
-      <p className="text-gray-400 text-xs mb-4">막대: {entityLabel} 순매수(순매도)(억원) · 선: KOSPI 지수(pt)</p>
+      <p className="text-[var(--text-dim)] text-xs mb-4 font-medium">막대: {entityLabel} 순매수(순매도)(억원) · 선: KOSPI 지수(pt)</p>
       <div className={compact ? 'h-[300px] sm:h-[357px]' : 'h-60 sm:h-72'}>
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={chartData} barCategoryGap="15%">
-            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
             <XAxis
               dataKey="date"
-              tick={{ fill: '#9ca3af', fontSize: 10 }}
+              tick={{ fill: 'var(--chart-tick)', fontSize: 10 }}
               tickFormatter={(str) => (str ? str.slice(5) : '')}
               interval={Math.max(Math.floor(chartData.length / 12), 0)}
-              axisLine={{ stroke: '#4b5563' }}
+              axisLine={{ stroke: 'var(--chart-axis)' }}
             />
             <YAxis
               yAxisId="flow"
-              tick={{ fill: '#9ca3af', fontSize: 10 }}
-              axisLine={{ stroke: '#4b5563' }}
+              tick={{ fill: 'var(--chart-tick)', fontSize: 10 }}
+              axisLine={{ stroke: 'var(--chart-axis)' }}
               tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
             />
             <YAxis
@@ -172,9 +174,9 @@ export function CumulativeChart({ data, compact = false, entityLabel = '금융�
     chartData.length > 0 && chartData[chartData.length - 1].cumulative >= 0;
 
   return (
-    <div className="rounded-xl border border-gray-700/50 bg-gray-800/50 backdrop-blur-sm p-5">
-      <h3 className="text-white font-bold mb-1">{entityLabel} 누적 순매수 추이</h3>
-      <p className="text-gray-400 text-xs mb-4">Cumulative {entityLabel} Position (억원)</p>
+    <div className="rounded-xl border border-[var(--panel-border)] bg-[var(--panel)] backdrop-blur-sm p-5 shadow-sm">
+      <h3 className="text-[var(--text)] font-bold mb-1">{entityLabel} 누적 순매수 추이</h3>
+      <p className="text-[var(--text-dim)] text-xs mb-4 font-medium">Cumulative {entityLabel} Position (억원)</p>
       <div className={compact ? 'h-[200px] sm:h-[248px]' : 'h-60 sm:h-72'}>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData}>
@@ -192,21 +194,21 @@ export function CumulativeChart({ data, compact = false, entityLabel = '금융�
                 />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
             <XAxis
               dataKey="date"
-              tick={{ fill: '#9ca3af', fontSize: 10 }}
+              tick={{ fill: 'var(--chart-tick)', fontSize: 10 }}
               tickFormatter={(str) => (str ? str.slice(5) : '')}
               interval={Math.max(Math.floor(chartData.length / 12), 0)}
-              axisLine={{ stroke: '#4b5563' }}
+              axisLine={{ stroke: 'var(--chart-axis)' }}
             />
             <YAxis
-              tick={{ fill: '#9ca3af', fontSize: 10 }}
-              axisLine={{ stroke: '#4b5563' }}
+              tick={{ fill: 'var(--chart-tick)', fontSize: 10 }}
+              axisLine={{ stroke: 'var(--chart-axis)' }}
               tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
             />
             <Tooltip content={<CustomTooltip />} />
-            <ReferenceLine y={0} stroke="#6b7280" />
+            <ReferenceLine y={0} stroke="var(--chart-axis)" />
             <Area
               type="monotone"
               dataKey="cumulative"
@@ -230,30 +232,30 @@ export function MovingAverageChart({ data, entityLabel = '금융투자' }: Chart
   }));
 
   return (
-    <div className="rounded-xl border border-gray-700/50 bg-gray-800/50 backdrop-blur-sm p-5">
-      <h3 className="text-white font-bold mb-1">{entityLabel} 이동평균 방향성 분석</h3>
-      <p className="text-gray-400 text-xs mb-4">5일 / 20일 이동평균 (MA5 &lt; MA20 = 매도 압력 우세)</p>
+    <div className="rounded-xl border border-[var(--panel-border)] bg-[var(--panel)] backdrop-blur-sm p-5 shadow-sm">
+      <h3 className="text-[var(--text)] font-bold mb-1">{entityLabel} 이동평균 방향성 분석</h3>
+      <p className="text-[var(--text-dim)] text-xs mb-4 font-medium">5일 / 20일 이동평균 (MA5 &lt; MA20 = 매도 압력 우세)</p>
       <div className="h-60 sm:h-72">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
             <XAxis
               dataKey="date"
-              tick={{ fill: '#9ca3af', fontSize: 10 }}
+              tick={{ fill: 'var(--chart-tick)', fontSize: 10 }}
               tickFormatter={(str) => (str ? str.slice(5) : '')}
               interval={Math.max(Math.floor(chartData.length / 12), 0)}
-              axisLine={{ stroke: '#4b5563' }}
+              axisLine={{ stroke: 'var(--chart-axis)' }}
             />
             <YAxis
-              tick={{ fill: '#9ca3af', fontSize: 10 }}
-              axisLine={{ stroke: '#4b5563' }}
+              tick={{ fill: 'var(--chart-tick)', fontSize: 10 }}
+              axisLine={{ stroke: 'var(--chart-axis)' }}
               tickFormatter={(v) => `${(v / 1000).toFixed(1)}k`}
             />
             <Tooltip content={<CustomTooltip />} />
             <Legend
-              wrapperStyle={{ fontSize: '12px', color: '#9ca3af' }}
+              wrapperStyle={{ fontSize: '12px', color: 'var(--chart-tick)' }}
             />
-            <ReferenceLine y={0} stroke="#6b7280" />
+            <ReferenceLine y={0} stroke="var(--chart-axis)" />
             <Line
               type="monotone"
               dataKey="ma5"
@@ -289,37 +291,37 @@ export function ForeignCorrelationChart({ data, entityLabel = '금융투자' }: 
   }));
 
   return (
-    <div className="rounded-xl border border-gray-700/50 bg-gray-800/50 backdrop-blur-sm p-5">
-      <h3 className="text-white font-bold mb-1">{entityLabel} vs {counterpartLabel} 수급 및 KOSPI 비교</h3>
-      <p className="text-gray-400 text-xs mb-4">선: {entityLabel}/{counterpartLabel}(억원) · 빨간선: KOSPI 지수(pt)</p>
+    <div className="rounded-xl border border-[var(--panel-border)] bg-[var(--panel)] backdrop-blur-sm p-5 shadow-sm">
+      <h3 className="text-[var(--text)] font-bold mb-1">{entityLabel} vs {counterpartLabel} 수급 및 KOSPI 비교</h3>
+      <p className="text-[var(--text-dim)] text-xs mb-4 font-medium">선: {entityLabel}/{counterpartLabel}(억원) · 빨간선: KOSPI 지수(pt)</p>
       <div className="h-60 sm:h-72">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
             <XAxis
               dataKey="date"
-              tick={{ fill: '#9ca3af', fontSize: 10 }}
+              tick={{ fill: 'var(--chart-tick)', fontSize: 10 }}
               tickFormatter={(str) => (str ? str.slice(5) : '')}
               interval={Math.max(Math.floor(chartData.length / 12), 0)}
-              axisLine={{ stroke: '#4b5563' }}
+              axisLine={{ stroke: 'var(--chart-axis)' }}
             />
             <YAxis
               yAxisId="flow"
-              tick={{ fill: '#9ca3af', fontSize: 10 }}
-              axisLine={{ stroke: '#4b5563' }}
+              tick={{ fill: 'var(--chart-tick)', fontSize: 10 }}
+              axisLine={{ stroke: 'var(--chart-axis)' }}
               tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
             />
             <YAxis
               yAxisId="kospi"
               orientation="right"
-              tick={{ fill: '#67e8f9', fontSize: 10 }}
-              axisLine={{ stroke: '#155e75' }}
+              tick={{ fill: '#0891b2', fontSize: 10 }}
+              axisLine={{ stroke: '#0891b2' }}
               tickFormatter={(v) => Number(v).toLocaleString('ko-KR', { maximumFractionDigits: 0 })}
               domain={['auto', 'auto']}
             />
             <Tooltip content={<CustomTooltip />} />
             <Legend wrapperStyle={{ fontSize: '12px' }} />
-            <ReferenceLine y={0} yAxisId="flow" stroke="#6b7280" />
+            <ReferenceLine y={0} yAxisId="flow" stroke="var(--chart-axis)" />
             <Line
               yAxisId="flow"
               type="monotone"
@@ -482,14 +484,14 @@ export function CorrelationChart({ data, entityKey, entityLabel }: CorrelationCh
   const series = calculateCorrelationSeries(aggregated, entityKey, window);
 
   return (
-    <div className="rounded-xl border border-gray-700/50 bg-gray-800/50 backdrop-blur-sm p-5">
-      {/* ?ㅻ뜑 */}
+    <div className="rounded-xl border border-[var(--panel-border)] bg-[var(--panel)] backdrop-blur-sm p-5 shadow-sm">
+      {/* 헤더 */}
       <div className="flex flex-wrap items-start justify-between gap-3 mb-1">
         <div>
-          <h3 className="text-white font-bold">
+          <h3 className="text-[var(--text)] font-bold">
             {entityLabel} 및 KOSPI 방향 일치율 & 상관계수
           </h3>
-          <p className="text-gray-400 text-xs mt-0.5">
+          <p className="text-[var(--text-dim)] text-xs mt-0.5 font-medium">
             파란선: {window}일 방향 일치율(%) · 주황선: {window}일 롤링 피어슨 상관계수(-1~+1)
           </p>
         </div>
@@ -551,20 +553,20 @@ export function CorrelationChart({ data, entityKey, entityLabel }: CorrelationCh
       <div className="h-64 sm:h-80">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={series}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
             <XAxis
               dataKey="date"
-              tick={{ fill: '#9ca3af', fontSize: 10 }}
+              tick={{ fill: 'var(--chart-tick)', fontSize: 10 }}
               tickFormatter={(str) => (str ? str.slice(5) : '')}
               interval={Math.max(Math.floor(series.length / 12), 0)}
-              axisLine={{ stroke: '#4b5563' }}
+              axisLine={{ stroke: 'var(--chart-axis)' }}
             />
             {/* 왼쪽 Y축 방향 일치율 (0~100%) */}
             <YAxis
               yAxisId="agree"
               domain={[0, 100]}
-              tick={{ fill: '#60a5fa', fontSize: 10 }}
-              axisLine={{ stroke: '#1e40af' }}
+              tick={{ fill: '#2563eb', fontSize: 10 }}
+              axisLine={{ stroke: '#2563eb' }}
               tickFormatter={(v) => `${v}%`}
             />
             {/* 오른쪽 Y축 피어슨 상관계수 (-1~+1) */}
@@ -572,19 +574,19 @@ export function CorrelationChart({ data, entityKey, entityLabel }: CorrelationCh
               yAxisId="corr"
               orientation="right"
               domain={[-1, 1]}
-              tick={{ fill: '#f59e0b', fontSize: 10 }}
-              axisLine={{ stroke: '#78350f' }}
+              tick={{ fill: '#d97706', fontSize: 10 }}
+              axisLine={{ stroke: '#d97706' }}
               tickFormatter={(v) => v.toFixed(1)}
             />
             <Tooltip content={<CorrelationTooltip />} />
             <Legend wrapperStyle={{ fontSize: '12px' }} />
 
             {/* 방향 일치율 50% 기준선 */}
-            <ReferenceLine yAxisId="agree" y={50} stroke="#6b7280" strokeDasharray="4 4"
-              label={{ value: '50%', fill: '#9ca3af', fontSize: 9, position: 'insideTopLeft' }} />
+            <ReferenceLine yAxisId="agree" y={50} stroke="var(--chart-axis)" strokeDasharray="4 4"
+              label={{ value: '50%', fill: 'var(--chart-tick)', fontSize: 9, position: 'insideTopLeft' }} />
             {/* 상관계수 0 기준선 */}
-            <ReferenceLine yAxisId="corr" y={0} stroke="#f43f5e" strokeDasharray="3 3"
-              label={{ value: 'r=0', fill: '#f87171', fontSize: 9, position: 'insideTopRight' }} />
+            <ReferenceLine yAxisId="corr" y={0} stroke="var(--danger)" strokeDasharray="3 3"
+              label={{ value: 'r=0', fill: 'var(--danger)', fontSize: 9, position: 'insideTopRight' }} />
 
             {/* 방향 일치율 선 */}
             <Line
