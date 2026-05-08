@@ -47,7 +47,7 @@ except ImportError:
 # 경로 설정
 # ---------------------------------------------------------------------------
 project_root = Path(__file__).parent
-static_html = project_root / "streamlit_static" / "index.html"
+static_html = project_root / "streamlit_static" / "index_v110.html"
 dist_html = project_root / "dist" / "index.html"
 latest_json = project_root / "public" / "latest-trading-data.json"
 
