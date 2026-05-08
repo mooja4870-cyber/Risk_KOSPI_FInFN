@@ -698,7 +698,7 @@ export default function App() {
         {/* Footer */}
         <footer className="mt-12 pt-6 border-t border-gray-800 text-center text-gray-500 text-xs pb-6">
           <p>주가 및 분석 정보는 투자 참고용이며, 투자 수익을 보장하지 않습니다.</p>
-          <p className="mt-1">데이터 출처: {dataSource}</p>
+          <p className="mt-1">데이터 출처: {dataSource} | v1.1.0</p>
         </footer>
       </div>
     </div>
