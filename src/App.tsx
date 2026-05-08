@@ -346,7 +346,7 @@ export default function App() {
                 <div className="p-1.5 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg shadow-blue-500/20">
                   <Zap className="w-5 h-5 text-white" />
                 </div>
-                <h1 className="text-xl md:text-3xl font-black bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                <h1 className="text-xl md:text-3xl font-black rainbow-text">
                   KOSPI '{currentEntity.label}' 수급 분석
                 </h1>
               </div>
