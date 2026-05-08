@@ -9,6 +9,12 @@ import time
 from pathlib import Path
 from datetime import datetime
 
+# Windows encoding fix
+if sys.platform == 'win32':
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
 # Add parent directory to path to import update_latest_data
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -32,12 +38,12 @@ def format_kst_now() -> str:
 
 def scheduled_update():
     """스케줄된 데이터 업데이트 작업"""
-    print(f"\n[{format_kst_now()}] 📊 데이터 업데이트 시작...")
+    print(f"\n[{format_kst_now()}] [UPDATE] 데이터 업데이트 시작...")
     try:
         update_data()
-        print(f"[{format_kst_now()}] ✅ 데이터 업데이트 완료")
+        print(f"[{format_kst_now()}] [SUCCESS] 데이터 업데이트 완료")
     except Exception as e:
-        print(f"[{format_kst_now()}] ❌ 업데이트 실패: {e}")
+        print(f"[{format_kst_now()}] [ERROR] 업데이트 실패: {e}")
 
 
 def main():
@@ -62,14 +68,14 @@ def main():
     )
     
     # 초기 시작 시 한번 실행
-    print(f"[{format_kst_now()}] 🚀 스케줄러 시작 - 초기 업데이트 진행 중...")
+    print(f"[{format_kst_now()}] [START] 스케줄러 시작 - 초기 업데이트 진행 중...")
     scheduled_update()
     
     # 스케줄러 시작
     scheduler.start()
-    print(f"[{format_kst_now()}] ✨ 자동 업데이트 스케줄러 활성화됨")
-    print("   📅 평일 09:00-15:30: 30분 단위 업데이트")
-    print("   📅 시장 외 시간: 시간 단위 업데이트")
+    print(f"[{format_kst_now()}] [OK] 자동 업데이트 스케줄러 활성화됨")
+    print("   [INFO] 평일 09:00-15:30: 30분 단위 업데이트")
+    print("   [INFO] 시장 외 시간: 시간 단위 업데이트")
     
     try:
         while True:

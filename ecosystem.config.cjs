@@ -2,8 +2,8 @@ module.exports = {
   apps: [
     {
       name: "risk-kospi-scheduler",
-      script: "python3.11",
-      args: "scripts/scheduler.py",
+      script: "python",
+      args: "-u scripts/scheduler.py",
       interpreter: "none",
       env: {
         PYTHONPATH: "."
@@ -14,7 +14,7 @@ module.exports = {
     },
     {
       name: "risk-kospi-backend",
-      script: "python3.11",
+      script: "python",
       args: "-m streamlit run streamlit_app.py --server.port 8501 --server.address 0.0.0.0",
       interpreter: "none",
       env: {

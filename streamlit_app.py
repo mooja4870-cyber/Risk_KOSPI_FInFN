@@ -86,14 +86,20 @@ def is_data_stale(payload: dict) -> bool:
         friday = today_kst - timedelta(days=days_since_friday)
         return latest < friday
 
-    # 평일: 장 마감 전(15:30 이전)에는 어제 데이터도 OK
+    # 평일: 장 중(09:00~16:00)에도 오늘 데이터가 없으면 stale로 간주하여 갱신 시도
     now = now_kst()
-    if now.hour < 16:
+    if now.hour >= 9 and now.hour < 16:
+        # 장 중인데 오늘 데이터가 없으면 갱신 필요
+        return latest < today_kst
+        
+    if now.hour < 9:
         yesterday = today_kst - timedelta(days=1)
-        # 월요일 아침이면 금요일 데이터 OK
+        # 월요일 새벽이면 금요일 데이터 OK
         if today_kst.weekday() == 0:
             return latest < (today_kst - timedelta(days=3))
         return latest < yesterday
+        
+    # 장 마감 후(16:00 이후)에는 반드시 오늘 데이터가 있어야 함
     return latest < today_kst
 
 
