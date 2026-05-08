@@ -448,7 +448,7 @@ export default function App() {
 
             <div className="col-span-2 sm:col-auto sm:ml-auto">
               <a
-                href="https://finance.naver.com/"
+                href="https://finance.naver.com/sise/sise_trans_style.naver"
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border border-emerald-500/40 text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20 hover:text-emerald-200 transition-all"
@@ -467,7 +467,7 @@ export default function App() {
               <span className="text-emerald-400/80 flex items-center gap-1">
                 출처
                 <a
-                  href="https://finance.naver.com/"
+                  href="https://finance.naver.com/sise/sise_trans_style.naver"
                   target="_blank"
                   rel="noreferrer"
                   className="text-emerald-400 hover:text-emerald-300 hover:underline"
